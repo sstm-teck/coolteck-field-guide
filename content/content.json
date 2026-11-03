@@ -1,0 +1,53 @@
+{
+  "version": "2026-11-03.1",
+  "sample": true,
+  "app": {
+    "title": "دليل الفني",
+    "subtitle": "كول تك",
+    "support": { "phone": "", "whatsapp": "" },
+    "prompts": {
+      "operation": { "text": "هتعمل إيه؟", "audio": "" },
+      "model": { "text": "أنهي جهاز؟", "audio": "" },
+      "done": { "text": "خلصت! الجهاز اشتغل؟", "audio": "" }
+    }
+  },
+  "operations": [
+    { "id": "replace-sensor", "title": "تغيير الحساس", "image": "media/op-replace-sensor.svg", "audio": "", "models": ["wrover", "xiao-c3", "xiao-s3", "xiao-s3-plus"] },
+    { "id": "replace-device", "title": "تغيير الجهاز", "image": "media/op-replace-device.svg", "audio": "", "models": ["wrover", "xiao-c3", "xiao-s3", "xiao-s3-plus"] },
+    { "id": "mount-battery", "title": "تركيب البطارية", "image": "media/op-mount-battery.svg", "audio": "", "models": ["xiao-s3-plus"] }
+  ],
+  "models": [
+    { "id": "wrover", "title": "WROVER", "image": "media/model-wrover.svg", "audio": "" },
+    { "id": "xiao-c3", "title": "XIAO C3", "image": "media/model-xiao-c3.svg", "audio": "" },
+    { "id": "xiao-s3", "title": "XIAO S3", "image": "media/model-xiao-s3.svg", "audio": "" },
+    { "id": "xiao-s3-plus", "title": "XIAO S3 Plus", "image": "media/model-xiao-s3-plus.svg", "audio": "" }
+  ],
+  "steps": {
+    "replace-sensor": [
+      { "id": "rs-01", "models": [], "warning": true, "text": "افصل الكهربا عن الجهاز الأول", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rs-02", "models": [], "warning": false, "text": "افتح غطا العلبة", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rs-03", "models": [], "warning": false, "text": "شوف رقم مكان الحساس القديم واحفظه", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rs-04", "models": [], "warning": false, "text": "اسحب فيشة الحساس القديم", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rs-05", "models": [], "warning": false, "text": "ركّب الحساس الجديد في نفس المكان", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rs-06", "models": [], "warning": false, "text": "اقفل الغطا ورجّع الكهربا", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rs-07", "models": [], "warning": false, "text": "كلّم المكتب يتأكدوا إن القراية وصلت", "image": "media/step-placeholder.svg", "video": "", "audio": "" }
+    ],
+    "replace-device": [
+      { "id": "rd-01", "models": [], "warning": true, "text": "افصل الكهربا عن الجهاز الأول", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rd-02", "models": [], "warning": false, "text": "صوّر الجهاز والسلوك قبل ما تفك أي حاجة", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rd-03", "models": [], "warning": false, "text": "فك الحساسات وعلّم كل واحد برقمه", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rd-04", "models": [], "warning": false, "text": "فك الجهاز القديم", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rd-05", "models": [], "warning": false, "text": "ركّب الجهاز الجديد مكانه", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rd-06", "models": [], "warning": false, "text": "رجّع كل حساس في نفس رقمه", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rd-07", "models": [], "warning": false, "text": "ركّب الشريحة والإريال", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "rd-08", "models": [], "warning": false, "text": "رجّع الكهربا وكلّم المكتب يربطوا الجهاز الجديد", "image": "media/step-placeholder.svg", "video": "", "audio": "" }
+    ],
+    "mount-battery": [
+      { "id": "mb-01", "models": [], "warning": true, "text": "افصل الكهربا عن الجهاز الأول", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "mb-02", "models": [], "warning": false, "text": "افتح غطا العلبة", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "mb-03", "models": [], "warning": false, "text": "حط البطارية في مكانها", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "mb-04", "models": [], "warning": true, "text": "وصّل سلك البطارية: الأحمر على +", "image": "media/step-placeholder.svg", "video": "", "audio": "" },
+      { "id": "mb-05", "models": [], "warning": false, "text": "اقفل الغطا ورجّع الكهربا", "image": "media/step-placeholder.svg", "video": "", "audio": "" }
+    ]
+  }
+}

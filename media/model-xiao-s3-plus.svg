@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="#F1F5F9"/>
+<rect x="55" y="70" width="290" height="160" rx="16" fill="#15803D" stroke="#0F172A" stroke-opacity=".25" stroke-width="4"/>
+<rect x="79" y="100" width="70" height="70" rx="6" fill="#CBD5E1" stroke="#64748B" stroke-width="4"/>
+<g fill="#BBF7D0"><circle cx="315" cy="95" r="8"/><circle cx="315" cy="205" r="8"/></g>
+<text x="200" y="215" text-anchor="middle" font-family="Arial,sans-serif" font-size="38" font-weight="700" fill="#fff">S3 Plus</text></svg>
