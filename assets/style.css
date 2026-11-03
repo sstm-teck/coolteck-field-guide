@@ -50,7 +50,6 @@ svg { display: block; }
 }
 .round svg { width: 30px; height: 30px; }
 .round:active { transform: scale(.94); }
-.round.call { background: #22C55E; }
 
 /* ---------- small status bars ---------- */
 .note-bar {
@@ -170,7 +169,6 @@ svg { display: block; }
 .help { margin-top: 18px; }
 .wide-btn { width: 100%; height: 76px; border-radius: 22px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 24px; font-weight: 800; box-shadow: var(--shadow); text-decoration: none; }
 .wide-btn svg { width: 34px; height: 34px; }
-.wide-btn.call { background: #22C55E; color: #fff; }
 .wide-btn.plain { background: var(--card); color: var(--brand); border: 3px solid var(--brand); margin-top: 12px; }
 
 /* ---------- empty / problem page ---------- */

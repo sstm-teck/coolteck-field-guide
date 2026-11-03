@@ -20,7 +20,6 @@
     prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>',
     speaker: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9Z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
     stop: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
-    call: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1Z"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg>',
     cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
     warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20Z" fill="currentColor" fill-opacity=".12"/><path d="M12 9v5M12 17.5h.01"/></svg>',
@@ -181,21 +180,13 @@
   function replace(hash) { history.replaceState(null, '', hash); render(); }
 
   // ---------------------------------------------------------------- header and bars
-  function supportHref() {
-    const s = (C.app && C.app.support) || {};
-    if (s.whatsapp) return 'https://wa.me/' + String(s.whatsapp).replace(/\D/g, '');
-    if (s.phone) return 'tel:' + String(s.phone).replace(/[^\d+]/g, '');
-    return '';
-  }
   function renderTop(title, sub) {
-    const call = supportHref();
-    const callBtn = call ? '<a class="round call" href="' + esc(call) + '" aria-label="كلّم المكتب">' + I.call + '</a>' : '';
     const app = C.app || {};
     $('#top').innerHTML = title
       ? '<button class="round" data-act="home" aria-label="الرئيسية">' + I.home + '</button>' +
-        '<div class="brand"><div><div class="t">' + esc(title) + '</div>' + (sub ? '<div class="s">' + esc(sub) + '</div>' : '') + '</div></div>' + callBtn
+        '<div class="brand"><div><div class="t">' + esc(title) + '</div>' + (sub ? '<div class="s">' + esc(sub) + '</div>' : '') + '</div></div>'
       : '<div class="brand"><img src="assets/icons/mark-96.png" alt=""><div><div class="t">' + esc(app.title || 'دليل الفني') + '</div>' +
-        '<div class="s">' + esc(app.subtitle || '') + '</div></div></div>' + callBtn;
+        '<div class="s">' + esc(app.subtitle || '') + '</div></div></div>';
   }
   function renderNote() {
     const notes = [];
@@ -311,11 +302,9 @@
     if (!o || !m) return replace('#/');
     renderTop(o.title, m.title);
     showNav('');
-    const call = supportHref();
     const p = prompt('done');
     $('#main').innerHTML = problem
       ? '<div class="done"><div class="big-ok" style="background:var(--warn-soft);color:var(--warn)">' + I.cross + '</div><h1>كلّم المكتب</h1>' +
-        (call ? '<a class="wide-btn call" href="' + esc(call) + '">' + I.call + 'كلّم المكتب</a>' : '') +
         '<a class="wide-btn plain" href="' + link(o.id, m.id, 1) + '" data-tap="1">' + I.restart + 'ابدأ من الأول</a>' +
         '<a class="wide-btn plain" href="#/" data-tap="1">' + I.home + 'الرئيسية</a></div>'
       : '<div class="done"><div class="big-ok">' + I.check + '</div><div class="ask" style="justify-content:center"><h1>' + esc(p.text || 'خلصت! الجهاز اشتغل؟') + '</h1>' + speakBtn(p.audio) + '</div>' +
