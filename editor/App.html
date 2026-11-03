@@ -1,0 +1,569 @@
+<script>
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------- icons
+  const I = {
+    site: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
+    sheet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>',
+    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>',
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+    left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+    image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>',
+    video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>',
+    sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>',
+    mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+    upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>',
+    ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg>',
+    close: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+    publish: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 0 1-.6-10A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9"/><path d="M12 12v9M9 15l3-3 3 3"/></svg>',
+  };
+
+  // ---------------------------------------------------------------- state
+  const S = { d: null, page: 'jobs', arg: null, blobs: {}, loading: {}, rec: null, modal: null, publishing: false };
+
+  const $ = sel => document.querySelector(sel);
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const plural = (n, w, p) => n + ' ' + (n === 1 ? w : (p || w + 's'));
+  const split = v => String(v || '').split(',').map(x => x.trim()).filter(Boolean);
+  const byOrder = (a, b) => Number(a.Order) - Number(b.Order);
+  function ago(iso) {
+    const s = (Date.now() - new Date(iso)) / 1000;
+    if (!iso || isNaN(s)) return 'never';
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s / 60) + ' min ago';
+    if (s < 86400) return Math.floor(s / 3600) + ' h ago';
+    return new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  const jobs = () => S.d.jobs.slice().sort(byOrder);
+  const models = () => S.d.models.slice().sort(byOrder);
+  const job = id => S.d.jobs.find(j => j.ID === id);
+  const model = id => S.d.models.find(m => m.ID === id);
+  const stepsOf = id => S.d.steps.filter(s => s.Job === id).sort(byOrder);
+  const dirty = () => !!S.d.lastEdit && (!S.d.lastPublish || S.d.lastEdit > S.d.lastPublish);
+
+  // ---------------------------------------------------------------- server
+  function call(fn) {
+    const args = Array.prototype.slice.call(arguments, 1);
+    return new Promise((resolve, reject) => {
+      google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[fn].apply(null, args);
+    });
+  }
+  let busy = 0;
+  function setBusy(d) { busy = Math.max(0, busy + d); $('#busy').classList.toggle('on', busy > 0); }
+  const errText = e => (e && e.message ? e.message : String(e)).replace(/^(Exception|Error):\s*/, '');
+  function toast(msg, isErr) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (isErr ? ' err' : '');
+    el.innerHTML = (isErr ? I.warn : I.ok) + '<span>' + esc(msg) + '</span>';
+    $('#toasts').appendChild(el);
+    setTimeout(() => el.remove(), isErr ? 7000 : 2200);
+  }
+  // Changes are sent one at a time, in order, so a slow reply never overwrites a newer change.
+  let queue = Promise.resolve();
+  function change(fn, args, okMsg) {
+    setBusy(1);
+    const p = queue.then(() => call.apply(null, [fn].concat(args))).then(d => {
+      apply(d);
+      if (okMsg) toast(okMsg);
+      return true;
+    }, e => {
+      toast(errText(e), true);
+      return false;
+    }).finally(() => setBusy(-1));
+    queue = p.then(() => {}, () => {});
+    return p;
+  }
+  function apply(d) {
+    S.d = d;
+    updateTop();
+    renderKeepingFocus();
+  }
+
+  function updateTop() {
+    $('#siteLink').href = S.d.site;
+    $('#sheetLink').href = S.d.sheetUrl;
+    const b = $('#publishBtn');
+    b.disabled = S.publishing;
+    b.innerHTML = I.publish + (S.publishing ? 'Publishing…' : 'Publish') + (dirty() ? '<span class="dot" title="Changes not on the site yet"></span>' : '');
+    b.title = dirty() ? 'There are changes that are not on the site yet' : 'The site is up to date (published ' + ago(S.d.lastPublish) + ')';
+  }
+
+  // ---------------------------------------------------------------- media previews
+  /** Published files come from the site; new ones from this browser or, once, from Drive. */
+  function mediaSrc(name) {
+    if (!name) return '';
+    if (S.blobs[name]) return S.blobs[name];
+    const m = S.d.media.find(x => x.name === name);
+    if (m && m.published) return S.d.site + 'media/' + encodeURIComponent(name);
+    if (m && m.drive && !S.loading[name]) {
+      S.loading[name] = true;
+      call('apiMediaData', name).then(r => {
+        const bin = atob(r.data), bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        S.blobs[name] = URL.createObjectURL(new Blob([bytes], { type: r.mime }));
+        renderKeepingFocus();
+      }, () => { /* preview only */ });
+    }
+    return '';
+  }
+  const KIND_ICON = { image: I.image, video: I.video, audio: I.sound };
+  const KIND_LABEL = { image: 'Picture', video: 'Video', audio: 'Sound' };
+
+  /** A media box: preview + Upload (+ Record for sounds) + Remove. */
+  function slot(table, id, field, kind, value, big) {
+    const src = mediaSrc(value);
+    const recHere = S.rec && S.rec.table === table && S.rec.id === id && S.rec.field === field;
+    let view;
+    if (!value) view = '<span class="empty-ico">' + KIND_ICON[kind] + '</span>';
+    else if (!src) view = '<span class="muted" style="font-size:12px">Loading preview…</span>';
+    else if (kind === 'image') view = '<img src="' + esc(src) + '" alt="">';
+    else if (kind === 'video') view = '<video src="' + esc(src) + '" controls muted playsinline preload="metadata"></video>';
+    else view = '<audio src="' + esc(src) + '" controls preload="none"></audio>';
+    return '<div class="slot' + (value ? ' filled' : '') + (big ? ' big' : '') + '" data-table="' + esc(table) + '" data-id="' + esc(id) + '" data-field="' + esc(field) + '" data-kind="' + kind + '">' +
+      '<div class="s-label"><span>' + KIND_LABEL[kind] + '</span>' + (value ? '<span class="mono" title="' + esc(value) + '">' + esc(value.slice(0, 6)) + '…</span>' : '') + '</div>' +
+      '<div class="s-view">' + view + '</div>' +
+      '<div class="s-act"><button class="btn btn-sm" data-act="pick">' + I.upload + (value ? 'Change' : 'Upload') + '</button>' +
+      (kind === 'audio' ? '<button class="btn btn-sm' + (recHere ? ' rec-on' : '') + '" data-act="record">' + I.mic + (recHere ? 'Stop' : 'Record') + '</button>' : '') +
+      (value ? '<button class="btn btn-sm btn-ghost" data-act="unattach" title="Remove">' + I.trash + '</button>' : '') + '</div></div>';
+  }
+  const slotInfo = el => { const s = el.closest('.slot'); return { el: s, table: s.dataset.table, id: s.dataset.id, field: s.dataset.field, kind: s.dataset.kind }; };
+
+  // ---------------------------------------------------------------- uploads
+  const ACCEPT = { image: 'image/*', video: 'video/mp4,video/webm', audio: 'audio/*' };
+  const AUDIO_OK = ['audio/mpeg', 'audio/mp4', 'audio/x-m4a', 'audio/aac', 'audio/ogg', 'audio/webm', 'audio/wav', 'audio/x-wav'];
+  const MAX = { image: 3, audio: 5, video: 25 };  // MB, same as the server
+  let pickFor = null;
+  function pick(info) {
+    pickFor = info;
+    const f = $('#filePick');
+    f.value = '';
+    f.accept = ACCEPT[info.kind];
+    f.click();
+  }
+  function toBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result).split(',')[1]);
+      r.onerror = () => reject(r.error);
+      r.readAsDataURL(blob);
+    });
+  }
+  /** Phone photos are made small: longest side 1280 px, WebP (JPEG when WebP isn't available). */
+  async function shrinkImage(file) {
+    if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file;
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const scale = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const as = (type, q) => new Promise(r => c.toBlob(r, type, q));
+    let out = await as('image/webp', 0.72);
+    if (!out || out.type !== 'image/webp') out = await as('image/jpeg', 0.78);
+    return out.size < file.size ? out : file;
+  }
+  async function attach(info, file) {
+    const type = String(file.type || '').split(';')[0];
+    if (type.split('/')[0] !== info.kind) { toast('This place takes a ' + KIND_LABEL[info.kind].toLowerCase() + '.', true); return; }
+    if (info.kind === 'audio' && AUDIO_OK.indexOf(type) === -1) { toast('This sound format (' + type + ') does not play on phones. Use MP3 or M4A, or record here.', true); return; }
+    let blob = file;
+    try {
+      if (info.kind === 'image') blob = await shrinkImage(file);
+    } catch (e) { blob = file; }
+    if (blob.size > MAX[info.kind] * 1024 * 1024) { toast('Too big: ' + (blob.size / 1048576).toFixed(1) + ' MB. The limit for a ' + KIND_LABEL[info.kind].toLowerCase() + ' is ' + MAX[info.kind] + ' MB.', true); return; }
+    if (info.kind === 'video' && blob.size > 8 * 1024 * 1024) toast('Big video (' + (blob.size / 1048576).toFixed(1) + ' MB): technicians on weak internet will wait. Shorter clips are better.');
+    if (info.el) info.el.classList.add('busy');
+    const data = await toBase64(blob);
+    const ok = await change('apiAttach', [info.table, info.id, info.field, { mime: blob.type || type, data: data, name: file.name || 'recording' }],
+      KIND_LABEL[info.kind] + ' saved');
+    if (ok) {
+      const name = fieldValue(info);
+      if (name && !S.blobs[name]) { S.blobs[name] = URL.createObjectURL(blob); renderKeepingFocus(); }
+    }
+  }
+  function fieldValue(info) {
+    if (info.table === 'Settings') return S.d.settings[info.id];
+    const rows = { Jobs: S.d.jobs, Models: S.d.models, Steps: S.d.steps }[info.table];
+    const r = rows.find(x => x.ID === info.id);
+    return r ? r[info.field] : '';
+  }
+  $('#filePick').addEventListener('change', ev => {
+    const f = ev.target.files[0];
+    if (f && pickFor) attach(pickFor, f);
+  });
+
+  // ---------------------------------------------------------------- recording
+  async function toggleRecord(info) {
+    if (S.rec) {
+      const same = S.rec.table === info.table && S.rec.id === info.id && S.rec.field === info.field;
+      S.rec.recorder.stop();
+      if (same) return;
+    }
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+      toast('The browser did not allow the microphone here. Record the sound on your phone and use Upload.', true);
+      return;
+    }
+    const mime = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+    if (!mime) { stream.getTracks().forEach(t => t.stop()); toast('This browser cannot record. Use Upload.', true); return; }
+    const recorder = new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: 32000 });
+    const chunks = [];
+    recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    recorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      const r = S.rec;
+      S.rec = null;
+      renderKeepingFocus();
+      const blob = new Blob(chunks, { type: mime.split(';')[0] });
+      if (blob.size < 1500) { toast('The recording is empty. Try again.', true); return; }
+      const el = document.querySelector('.slot[data-table="' + r.table + '"][data-id="' + CSS.escape(r.id) + '"][data-field="' + r.field + '"]');
+      attach({ table: r.table, id: r.id, field: r.field, kind: 'audio', el: el }, blob);
+    };
+    S.rec = { table: info.table, id: info.id, field: info.field, recorder: recorder };
+    recorder.start();
+    renderKeepingFocus();
+    toast('Recording… press Stop when done.');
+  }
+
+  // ---------------------------------------------------------------- routing
+  const hasHistory = () => !!(window.google && google.script && google.script.history);
+  const routeHash = () => S.page + (S.arg ? '=' + encodeURIComponent(S.arg) : '');
+  function go(page, arg) {
+    S.page = page; S.arg = arg || null;
+    if (hasHistory()) google.script.history.push(null, null, routeHash());
+    render();
+    window.scrollTo(0, 0);
+  }
+  function applyRoute(hash) {
+    const m = String(hash || '').replace(/^#/, '').match(/^([a-z]+)(?:=(.*))?$/);
+    S.page = m && ['jobs', 'job', 'models', 'settings'].indexOf(m[1]) !== -1 ? m[1] : 'jobs';
+    S.arg = m && m[2] ? decodeURIComponent(m[2]) : null;
+    render();
+  }
+
+  // ---------------------------------------------------------------- render
+  /** Re-renders without losing the field the admin is typing in. */
+  function renderKeepingFocus() {
+    const a = document.activeElement;
+    const key = a && a.dataset && a.dataset.key;
+    const keep = key ? { key: key, value: a.value, start: a.selectionStart, end: a.selectionEnd } : null;
+    render();
+    if (!keep) return;
+    const el = document.querySelector('[data-key="' + CSS.escape(keep.key) + '"]');
+    if (!el) return;
+    el.value = keep.value;
+    el.focus();
+    try { el.setSelectionRange(keep.start, keep.end); } catch (e) { /* not a text field */ }
+  }
+  function render() {
+    if (!S.d) return;
+    document.querySelectorAll('#nav [data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === S.page || (S.page === 'job' && b.dataset.nav === 'jobs')));
+    const pages = { jobs: renderJobs, job: renderJob, models: renderModels, settings: renderSettings };
+    $('#main').innerHTML = pages[S.page]();
+  }
+
+  // ---------- jobs
+  function renderJobs() {
+    const list = jobs();
+    return '<div class="page-head"><div><h1>Jobs</h1><p>What the technician chooses first. Open a job to edit its steps.</p></div>' +
+      '<div class="head-actions"><button class="btn btn-primary" data-act="newJob">' + I.plus + 'New job</button></div></div>' +
+      (dirty() ? '<div class="note" style="margin:0 0 16px">' + I.info + '<span>Some changes are not on the site yet. Press <b>Publish</b> when you are done.</span></div>' : '') +
+      (list.length ? '<div class="tiles">' + list.map((j, i) => {
+        const n = stepsOf(j.ID).length, ms = split(j.Models).filter(model);
+        const src = mediaSrc(j.Picture);
+        return '<div class="card tile' + (j.Show === 'No' ? ' hidden-job' : '') + '" data-act="openJob" data-id="' + esc(j.ID) + '">' +
+          '<div class="pic">' + (src ? '<img src="' + esc(src) + '" alt="">' : I.image) + '</div>' +
+          '<div class="body"><div class="ar">' + esc(j.Title) + '</div><div class="mono muted">' + esc(j.ID) + '</div>' +
+          '<div class="meta">' + pill(plural(n, 'step'), n ? 't-blue' : 't-amber') + pill(plural(ms.length, 'model'), ms.length ? 't-grey' : 't-red') +
+          (j.Show === 'No' ? pill('Hidden', 't-grey') : '') +
+          '<span class="order"><button class="mini-btn" data-act="move" data-table="Jobs" data-id="' + esc(j.ID) + '" data-dir="-1" title="Earlier"' + (i ? '' : ' disabled') + '>' + I.left + '</button>' +
+          '<button class="mini-btn" data-act="move" data-table="Jobs" data-id="' + esc(j.ID) + '" data-dir="1" title="Later"' + (i < list.length - 1 ? '' : ' disabled') + '>' + I.right + '</button></span></div></div></div>';
+      }).join('') + '</div>' : '<div class="card empty"><div class="big">No jobs yet</div>Add the first job, e.g. تغيير الحساس.</div>');
+  }
+  const pill = (t, tone) => '<span class="pill ' + tone + '">' + esc(t) + '</span>';
+
+  function renderJob() {
+    const j = job(S.arg);
+    if (!j) return '<button class="back" data-nav="jobs">' + I.back + 'Jobs</button><div class="card empty"><div class="big">This job no longer exists</div></div>';
+    const jm = split(j.Models);
+    const steps = stepsOf(j.ID);
+    return '<button class="back" data-nav="jobs">' + I.back + 'Jobs</button>' +
+      '<div class="card ed-head">' + slot('Jobs', j.ID, 'Picture', 'image', j.Picture, true) +
+      '<div class="ed-fields">' +
+      '<div class="field"><label>Name the technician sees (Arabic)</label><input class="ar-input" data-key="Jobs:' + esc(j.ID) + ':Title" data-set="Jobs" data-id="' + esc(j.ID) + '" data-f="Title" value="' + esc(j.Title) + '"></div>' +
+      '<div class="field"><label>Models this job is for</label><div class="chips">' + models().map(m => '<button class="chip' + (jm.indexOf(m.ID) !== -1 ? ' on' : '') + '" data-act="jobModel" data-m="' + esc(m.ID) + '">' + esc(m.Title) + '</button>').join('') + '</div>' +
+      (jm.length ? (jm.length === 1 ? '<span class="hint">One model: the technician goes straight to the steps.</span>' : '') : '<span class="hint" style="color:var(--red)">Choose at least one model, or the job will not show on the site.</span>') + '</div>' +
+      '<div class="row"><span class="switch-line" data-act="toggle" data-table="Jobs" data-id="' + esc(j.ID) + '" data-f="Show" data-v="' + (j.Show === 'No' ? 'Yes' : 'No') + '"><span class="switch' + (j.Show === 'No' ? '' : ' on') + '"></span>Show on the site</span>' +
+      '<span class="mono muted">link: ' + esc(j.ID) + '</span>' +
+      '<a class="btn btn-sm" target="_blank" rel="noopener" href="' + esc(S.d.site + '#/' + j.ID) + '">' + I.site + 'Open on site</a>' +
+      '<button class="btn btn-sm btn-danger" data-act="delJob" style="margin-left:auto">' + I.trash + 'Delete job</button></div>' +
+      '<div style="max-width:320px">' + slot('Jobs', j.ID, 'Sound', 'audio', j.Sound) + '</div>' +
+      '</div></div>' +
+      '<div class="page-head" style="margin-top:24px"><div><h1 style="font-size:20px">Steps <span class="muted" style="font-weight:500">' + steps.length + '</span></h1>' +
+      '<p>One step = one screen: a picture or short video, one short sentence and a voice. Leave models on <b>All</b> unless a step is different on one board.</p></div></div>' +
+      '<div class="steps">' + steps.map((s, i) => stepCard(j, s, i, steps.length)).join('') +
+      '<button class="add-step" data-act="addStep">' + I.plus + 'Add step</button></div>';
+  }
+
+  function stepCard(j, s, i, total) {
+    const jm = split(j.Models), sm = split(s.Models);
+    const all = !sm.length;
+    const firstModel = all ? jm[0] : sm.find(m => jm.indexOf(m) !== -1);
+    let link = '';
+    if (firstModel) {
+      const n = stepsOf(j.ID).filter(x => !split(x.Models).length || split(x.Models).indexOf(firstModel) !== -1).indexOf(s) + 1;
+      link = S.d.site + '#/' + j.ID + '/' + firstModel + '/' + n;
+    }
+    const warn = s.Warning === 'Yes';
+    return '<div class="card step' + (warn ? ' warn-step' : '') + '" data-step="' + esc(s.ID) + '">' +
+      '<div class="rail"><span class="n">' + (i + 1) + '</span>' +
+      '<button class="mini-btn" data-act="move" data-table="Steps" data-id="' + esc(s.ID) + '" data-dir="-1" title="Move up"' + (i ? '' : ' disabled') + '>' + I.up + '</button>' +
+      '<button class="mini-btn" data-act="move" data-table="Steps" data-id="' + esc(s.ID) + '" data-dir="1" title="Move down"' + (i < total - 1 ? '' : ' disabled') + '>' + I.down + '</button></div>' +
+      '<div class="content">' +
+      '<div class="media-row">' + slot('Steps', s.ID, 'Picture', 'image', s.Picture) + slot('Steps', s.ID, 'Video', 'video', s.Video) + slot('Steps', s.ID, 'Sound', 'audio', s.Sound) + '</div>' +
+      '<textarea class="say ar" rows="2" placeholder="جملة قصيرة وواضحة" data-key="Steps:' + esc(s.ID) + ':Text" data-set="Steps" data-id="' + esc(s.ID) + '" data-f="Text">' + esc(s.Text) + '</textarea>' +
+      '<div class="opts">' +
+      '<span class="switch-line" data-act="toggle" data-table="Steps" data-id="' + esc(s.ID) + '" data-f="Warning" data-v="' + (warn ? 'No' : 'Yes') + '"><span class="switch warn' + (warn ? ' on' : '') + '"></span>Warning (red)</span>' +
+      '<span><span class="lbl">Models</span><span class="chips" style="display:inline-flex">' +
+      '<button class="chip all' + (all ? ' on' : '') + '" data-act="stepModel" data-id="' + esc(s.ID) + '" data-m="">All</button>' +
+      jm.filter(model).map(m => '<button class="chip' + (sm.indexOf(m) !== -1 ? ' on' : '') + '" data-act="stepModel" data-id="' + esc(s.ID) + '" data-m="' + esc(m) + '">' + esc(model(m).Title) + '</button>').join('') +
+      '</span></span></div>' +
+      '<div class="tools">' + (link ? '<a class="btn btn-sm btn-ghost" target="_blank" rel="noopener" href="' + esc(link) + '">' + I.site + 'Open on site</a>' : '') +
+      '<button class="btn btn-sm btn-ghost" data-act="insertStep" data-id="' + esc(s.ID) + '">' + I.plus + 'Step after</button>' +
+      '<button class="btn btn-sm btn-ghost" data-act="dupStep" data-id="' + esc(s.ID) + '">' + I.copy + 'Duplicate</button>' +
+      '<button class="btn btn-sm btn-ghost btn-danger" data-act="delStep" data-id="' + esc(s.ID) + '">' + I.trash + 'Delete</button></div>' +
+      '</div></div>';
+  }
+
+  // ---------- models
+  function renderModels() {
+    const list = models();
+    return '<div class="page-head"><div><h1>Models</h1><p>The boards the technician chooses after the job. Use a clear photo of the real board.</p></div>' +
+      '<div class="head-actions"><button class="btn btn-primary" data-act="newModel">' + I.plus + 'New model</button></div></div>' +
+      '<div class="steps">' + list.map((m, i) => {
+        const used = S.d.jobs.filter(j => split(j.Models).indexOf(m.ID) !== -1).length;
+        return '<div class="card ed-head">' + slot('Models', m.ID, 'Picture', 'image', m.Picture, true) +
+          '<div class="ed-fields"><div class="field"><label>Name the technician sees</label><input class="ar-input" data-key="Models:' + esc(m.ID) + ':Title" data-set="Models" data-id="' + esc(m.ID) + '" data-f="Title" value="' + esc(m.Title) + '"></div>' +
+          '<div class="row"><span class="mono muted">link: ' + esc(m.ID) + '</span>' + pill('In ' + plural(used, 'job'), used ? 't-blue' : 't-grey') +
+          '<button class="mini-btn" data-act="move" data-table="Models" data-id="' + esc(m.ID) + '" data-dir="-1" title="Earlier"' + (i ? '' : ' disabled') + '>' + I.up + '</button>' +
+          '<button class="mini-btn" data-act="move" data-table="Models" data-id="' + esc(m.ID) + '" data-dir="1" title="Later"' + (i < list.length - 1 ? '' : ' disabled') + '>' + I.down + '</button>' +
+          '<button class="btn btn-sm btn-danger" data-act="delModel" data-id="' + esc(m.ID) + '" style="margin-left:auto">' + I.trash + 'Delete</button></div>' +
+          '<div style="max-width:320px">' + slot('Models', m.ID, 'Sound', 'audio', m.Sound) + '</div></div></div>';
+      }).join('') + '</div>';
+  }
+
+  // ---------- settings
+  function renderSettings() {
+    const s = S.d.settings;
+    const text = (k, label, ar) => '<div class="field"><label>' + label + '</label><input class="' + (ar ? 'ar-input' : '') + '" data-key="Settings:' + k + '" data-setting="' + k + '" value="' + esc(s[k]) + '"></div>';
+    const prompt = (k, label) => '<div class="prompt-row">' + text(k, label, true) + slot('Settings', k + '_sound', 'Value', 'audio', s[k + '_sound']) + '</div>';
+    return '<div class="page-head"><div><h1>Settings</h1><p>Site texts, spoken questions, who can edit, and publishing.</p></div>' +
+      '<div class="head-actions"><a class="btn" target="_blank" rel="noopener" href="' + esc(S.d.sheetUrl) + '">' + I.sheet + 'Google Sheet</a>' +
+      (S.d.folderUrl ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(S.d.folderUrl) + '">' + I.image + 'Media folder</a>' : '') + '</div></div>' +
+      '<div class="set-grid">' +
+      '<div class="card card-pad"><h3>Site</h3><div class="form">' + text('title', 'Title', true) + text('subtitle', 'Subtitle', true) + '</div>' +
+      '<div style="margin-top:14px"><span class="switch-line" data-act="sample"><span class="switch' + (/^y/i.test(s.sample) ? ' on' : '') + '"></span>Show the “sample content” bar</span></div></div>' +
+      '<div class="card card-pad"><h3>Editors</h3><div class="field"><label>Google accounts that can open this editor</label>' +
+      '<textarea data-key="Settings:admins" data-setting="admins" rows="3" class="mono">' + esc(s.admins) + '</textarea><span class="hint">Comma separated. Saved when you click outside the box.</span></div></div>' +
+      '<div class="card card-pad full"><h3>Spoken questions <small>the text and the voice on each choosing screen</small></h3><div class="steps">' +
+      prompt('ask_job', 'Jobs screen') + prompt('ask_model', 'Models screen') + prompt('ask_done', 'Last screen') + '</div></div>' +
+      '<div class="card card-pad full"><h3>Publishing</h3>' +
+      '<p style="margin:0 0 10px">Publish sends everything to <a target="_blank" rel="noopener" href="' + esc(S.d.site) + '">' + esc(S.d.site) + '</a> through the GitHub repository <a target="_blank" rel="noopener" href="https://github.com/' + esc(S.d.repo) + '">' + esc(S.d.repo) + '</a>. ' +
+      'Last published ' + esc(ago(S.d.lastPublish)) + (S.d.lastCommit ? ' · <a target="_blank" rel="noopener" href="https://github.com/' + esc(S.d.repo) + '/commit/' + esc(S.d.lastCommit) + '">commit ' + esc(S.d.lastCommit.slice(0, 7)) + '</a>' : '') + '.</p>' +
+      (S.d.hasToken ? '<p class="ok-line">' + I.ok + 'GitHub token is set.</p>' : '<div class="note">' + I.warn + '<span>No GitHub token yet, so Publish cannot work.</span></div>') +
+      '<form id="tokenForm" class="form" style="margin-top:12px"><div class="field full"><label>' + (S.d.hasToken ? 'Replace the token' : 'GitHub token') + '</label>' +
+      '<div style="display:flex;gap:8px"><input name="token" type="password" autocomplete="off" placeholder="github_pat_…" style="flex:1"><button class="btn btn-primary" type="submit">Save token</button></div>' +
+      '<span class="hint">Kept in the script\'s private properties, not in the sheet.</span></div></form>' +
+      '<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">How to make the token</summary><ol class="steps-howto">' +
+      '<li>Sign in to GitHub as <b>sstm-teck</b> and open <a target="_blank" rel="noopener" href="https://github.com/settings/personal-access-tokens/new">Settings › Developer settings › Fine-grained tokens › Generate new token</a>.</li>' +
+      '<li>Name: <b>Field Guide Editor</b>. Expiration: the longest you are comfortable with (put a reminder to renew it).</li>' +
+      '<li>Repository access: <b>Only select repositories</b> › <b>' + esc(S.d.repo) + '</b>.</li>' +
+      '<li>Permissions › Repository › <b>Contents: Read and write</b>. Nothing else.</li>' +
+      '<li>Generate, copy it, paste it above and press Save token.</li></ol></details></div>' +
+      '</div>';
+  }
+
+  // ---------------------------------------------------------------- dialogs
+  function openModal(html) {
+    const w = $('#modal');
+    w.innerHTML = html;
+    w.classList.add('open');
+    w.setAttribute('aria-hidden', 'false');
+    S.modal = true;
+    const first = w.querySelector('input');
+    if (first) setTimeout(() => first.focus(), 30);
+  }
+  function closeModal() {
+    if (S.publishing) return;
+    S.modal = null;
+    const w = $('#modal');
+    w.classList.remove('open');
+    w.setAttribute('aria-hidden', 'true');
+    w.innerHTML = '';
+  }
+  function confirmBox(title, text, yesLabel, onYes) {
+    S.onYes = onYes;
+    openModal('<div class="modal" style="width:min(460px,100%)"><div class="modal-head"><h2>' + esc(title) + '</h2></div>' +
+      '<div class="modal-body"><p style="margin:0">' + esc(text) + '</p></div>' +
+      '<div class="modal-foot"><button class="btn" data-act="closeModal">Cancel</button><button class="btn btn-primary" style="background:var(--red);border-color:var(--red)" data-act="yes">' + esc(yesLabel) + '</button></div></div>');
+  }
+  function newItemForm(table) {
+    const isJob = table === 'Jobs';
+    openModal('<form class="modal" id="newForm" data-table="' + table + '"><div class="modal-head"><h2>' + (isJob ? 'New job' : 'New model') + '</h2>' +
+      '<button type="button" class="icon-btn" data-act="closeModal">' + I.close + '</button></div><div class="modal-body"><div class="form">' +
+      '<div class="field full"><label>' + (isJob ? 'Name the technician sees (Arabic)' : 'Name the technician sees') + '</label><input name="Title" class="ar-input" placeholder="' + (isJob ? 'مثلاً: تغيير الحساس' : 'e.g. XIAO S3 Plus') + '" required></div>' +
+      '<div class="field full"><label>Link name (English)</label><input name="ID" class="mono" placeholder="' + (isJob ? 'replace-sensor' : 'xiao-s3-plus') + '" required spellcheck="false" autocomplete="off">' +
+      '<span class="hint">Small letters, numbers and dashes. It is part of the step links saved on phones, so it cannot be changed later.</span></div>' +
+      '</div></div><div class="modal-foot"><button type="button" class="btn" data-act="closeModal">Cancel</button><button class="btn btn-primary" type="submit">Create</button></div></form>');
+  }
+
+  function openPublish() {
+    const n = S.d.steps.filter(s => { const j = job(s.Job); return j && j.Show !== 'No'; }).length;
+    const shown = S.d.jobs.filter(j => j.Show !== 'No').length;
+    const fresh = S.d.media.filter(m => !m.published && m.drive).length;
+    const empty = S.d.steps.filter(s => !s.Text && !s.Picture && !s.Video).length;
+    openModal('<div class="modal"><div class="modal-head"><div><h2>Publish to the site</h2><p>' + esc(S.d.site) + '</p></div><button class="icon-btn" data-act="closeModal">' + I.close + '</button></div>' +
+      '<div class="modal-body" id="pubBody">' +
+      (!S.d.hasToken ? '<div class="note">' + I.warn + '<span>Set the GitHub token in Settings first.</span></div>' :
+        '<p style="margin:0">' + plural(shown, 'job') + ' and ' + plural(n, 'step') + ' will be published' + (fresh ? ', with up to ' + plural(fresh, 'new file') : '') + '.</p>' +
+        (empty ? '<div class="note">' + I.warn + '<span>' + plural(empty, 'step has', 'steps have') + ' no text and no picture.</span></div>' : '') +
+        (/^y/i.test(S.d.settings.sample) ? '<div class="note info">' + I.info + '<span>The “sample content” bar is on. Turn it off in Settings when the content is checked.</span></div>' : '') +
+        '<div class="note info">' + I.info + '<span>The site updates about a minute after publishing. Phones get the new version the next time they open it with internet.</span></div>') +
+      '</div><div class="modal-foot"><button class="btn" data-act="closeModal">Cancel</button>' +
+      (S.d.hasToken ? '<button class="btn btn-primary" data-act="doPublish">' + I.publish + 'Publish now</button>' : '<button class="btn btn-primary" data-act="toSettings">Go to Settings</button>') + '</div></div>');
+  }
+  async function doPublish(btn) {
+    S.publishing = true; updateTop();
+    btn.disabled = true; btn.textContent = 'Publishing…';
+    $('#pubBody').innerHTML = '<div class="loading" style="padding:20px 0"><div class="spinner"></div><p>Sending to GitHub…</p></div>';
+    try {
+      await queue;
+      const r = await call('apiPublish');
+      S.publishing = false;
+      apply(r.data);
+      const x = r.result;
+      $('#pubBody').innerHTML = '<p class="ok-line" style="font-size:16px">' + I.ok + 'Published</p>' +
+        '<p>' + plural(x.jobs, 'job') + ', ' + plural(x.steps, 'step') + ' · ' + plural(x.added, 'new file') + ' · ' + plural(x.removed, 'old file') + ' removed.</p>' +
+        '<p class="muted">Version ' + esc(x.version) + ' · <a target="_blank" rel="noopener" href="' + esc(x.commitUrl) + '">commit ' + esc(x.commit.slice(0, 7)) + '</a></p>' +
+        '<div class="note info">' + I.info + '<span>The site updates in about a minute.</span></div>';
+      btn.outerHTML = '<a class="btn btn-primary" target="_blank" rel="noopener" href="' + esc(S.d.site) + '">' + I.site + 'Open the site</a>';
+    } catch (e) {
+      S.publishing = false; updateTop();
+      $('#pubBody').innerHTML = '<div class="note">' + I.warn + '<span>' + esc(errText(e)) + '</span></div>';
+      btn.disabled = false; btn.textContent = 'Try again';
+    }
+  }
+
+  // ---------------------------------------------------------------- actions
+  const ACT = {
+    closeModal: () => closeModal(),
+    yes: () => { const f = S.onYes; S.onYes = null; closeModal(); if (f) f(); },
+    openJob: d => go('job', d.id),
+    newJob: () => newItemForm('Jobs'),
+    newModel: () => newItemForm('Models'),
+    move: d => change('apiMove', [d.table, d.id, Number(d.dir)]),
+    toggle: d => change('apiSet', [d.table, d.id, { [d.f]: d.v }]),
+    jobModel: d => {
+      const j = job(S.arg);
+      const ms = split(j.Models);
+      const next = ms.indexOf(d.m) !== -1 ? ms.filter(x => x !== d.m) : ms.concat([d.m]);
+      change('apiSet', ['Jobs', j.ID, { Models: models().map(m => m.ID).filter(id => next.indexOf(id) !== -1).join(', ') }]);
+    },
+    stepModel: d => {
+      const s = S.d.steps.find(x => x.ID === d.id);
+      let ms = split(s.Models);
+      if (!d.m) ms = [];
+      else ms = ms.indexOf(d.m) !== -1 ? ms.filter(x => x !== d.m) : ms.concat([d.m]);
+      change('apiSet', ['Steps', s.ID, { Models: ms.join(', ') }]);
+    },
+    delJob: () => {
+      const j = job(S.arg);
+      confirmBox('Delete “' + j.Title + '”?', 'The job and its ' + plural(stepsOf(j.ID).length, 'step') + ' are deleted from the sheet. The site keeps showing it until you publish.', 'Delete job',
+        () => change('apiDelete', ['Jobs', j.ID], 'Job deleted').then(ok => { if (ok) go('jobs'); }));
+    },
+    delModel: d => {
+      const m = model(d.id);
+      const only = S.d.steps.filter(s => { const ms = split(s.Models); return ms.length && ms.every(x => x === m.ID); }).length;
+      confirmBox('Delete “' + m.Title + '”?', 'It is taken off every job.' + (only ? ' ' + plural(only, 'step') + ' made only for this model ' + (only === 1 ? 'is' : 'are') + ' deleted.' : ''), 'Delete model',
+        () => change('apiDelete', ['Models', m.ID], 'Model deleted'));
+    },
+    addStep: () => change('apiCreate', ['Steps', { Job: S.arg }], 'Step added'),
+    insertStep: d => change('apiCreate', ['Steps', { Job: S.arg, after: d.id }], 'Step added'),
+    dupStep: d => change('apiDuplicateStep', [d.id], 'Step duplicated'),
+    delStep: d => confirmBox('Delete this step?', 'The step is removed from the job.', 'Delete step', () => change('apiDelete', ['Steps', d.id], 'Step deleted')),
+    pick: (d, ev, el) => { if (S.rec) { toast('Stop the recording first.', true); return; } pick(slotInfo(el)); },
+    record: (d, ev, el) => toggleRecord(slotInfo(el)),
+    unattach: (d, ev, el) => { const i = slotInfo(el); change('apiAttach', [i.table, i.id, i.field, null], KIND_LABEL[i.kind] + ' removed'); },
+    sample: () => change('apiSetSettings', [{ sample: /^y/i.test(S.d.settings.sample) ? 'No' : 'Yes' }]),
+    publish: () => openPublish(),
+    doPublish: (d, ev, el) => doPublish(el),
+    toSettings: () => { closeModal(); go('settings'); },
+  };
+
+  document.addEventListener('click', ev => {
+    const nav = ev.target.closest('[data-nav]');
+    if (nav) { ev.preventDefault(); go(nav.dataset.nav); return; }
+    const el = ev.target.closest('[data-act]');
+    if (!el) return;
+    const fn = ACT[el.dataset.act];
+    if (!fn) return;
+    ev.preventDefault();
+    if (el.disabled) return;
+    fn(el.dataset, ev, el);
+  });
+  // Text fields save when the admin leaves them.
+  document.addEventListener('change', ev => {
+    const t = ev.target;
+    if (t.dataset.set) {
+      change('apiSet', [t.dataset.set, t.dataset.id, { [t.dataset.f]: t.value }], 'Saved');
+    } else if (t.dataset.setting) {
+      change('apiSetSettings', [{ [t.dataset.setting]: t.value }], 'Saved');
+    }
+  });
+  document.addEventListener('submit', ev => {
+    const f = ev.target;
+    ev.preventDefault();
+    if (f.id === 'newForm') {
+      const table = f.dataset.table;
+      const rec = { ID: f.ID.value.trim().toLowerCase(), Title: f.Title.value.trim() };
+      if (!rec.Title) { toast('Write the name.', true); return; }
+      if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(rec.ID)) { toast('Link name: small English letters, numbers and dashes, e.g. replace-sensor.', true); return; }
+      closeModal();
+      change('apiCreate', [table, rec], (table === 'Jobs' ? 'Job' : 'Model') + ' created').then(ok => { if (ok && table === 'Jobs') go('job', rec.ID); });
+    } else if (f.id === 'tokenForm') {
+      const token = f.token.value.trim();
+      if (!token) { toast('Paste the token first.', true); return; }
+      change('apiSetToken', [token], 'Token saved. Publish is ready.');
+    }
+  });
+  $('#modal').addEventListener('mousedown', ev => { if (ev.target === $('#modal')) closeModal(); });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && S.modal) closeModal(); });
+  window.addEventListener('beforeunload', ev => { if (busy || S.rec || S.publishing) { ev.preventDefault(); ev.returnValue = ''; } });
+
+  // ---------------------------------------------------------------- start
+  const bar = document.createElement('div');
+  bar.id = 'busy'; bar.className = 'busy';
+  document.body.appendChild(bar);
+  $('#siteLink').innerHTML = I.site;
+  $('#sheetLink').innerHTML = I.sheet;
+  call('apiLoad').then(d => {
+    S.d = d;
+    updateTop();
+    if (hasHistory()) {
+      google.script.history.setChangeHandler(e => applyRoute(e.location && e.location.hash));
+      google.script.url.getLocation(loc => applyRoute(loc && loc.hash));
+    } else render();
+  }, e => {
+    $('#main').innerHTML = '<div class="card empty" style="margin-top:40px"><div class="big">Could not open the editor</div>' + esc(errText(e)) + '</div>';
+  });
+})();
+</script>
