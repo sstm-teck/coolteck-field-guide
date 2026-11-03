@@ -17,6 +17,9 @@ const CONTENT_PATH = 'content/content.json';
 const MEDIA_DIR = 'media/';
 const MEDIA_FOLDER_NAME = 'CoolTeck Field Guide · media';
 
+// The "CoolTeck Field Guide Editor" Google Sheet this script is bound to.
+const SPREADSHEET_ID = '1aO9VGcDerjaIThAG0FINVtbhLRgP_zCa-ovUXsN6D9A';
+
 // The owner of the script can always open the editor; others are listed in Settings › admins.
 const FIRST_ADMINS = 'salah.hassan@sstm-eg.com';
 

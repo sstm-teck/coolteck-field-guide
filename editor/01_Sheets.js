@@ -9,7 +9,7 @@ const MEMO_ = { ss: null, sheets: {} };
 
 function ss_() {
   if (MEMO_.ss) return MEMO_.ss;
-  const id = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
+  const id = SPREADSHEET_ID || PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
   MEMO_.ss = id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActiveSpreadsheet();
   if (!MEMO_.ss) throw new Error('The editor is not linked to its Google Sheet.');
   return MEMO_.ss;

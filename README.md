@@ -11,4 +11,5 @@ Step-by-step Arabic guide for SSTM field technicians working on CoolTeck devices
 `editor/` is the admin editor: a Google Apps Script web app (sstm-eg.com accounts only) bound to a
 Google Sheet. Admins edit jobs, models and steps there; **Publish** writes `content/content.json` and
 the files in `media/` to this repository in one commit, and GitHub Pages updates the site.
-Deploy with `clasp push -f` from `editor/`.
+Deploy from `editor/`: `clasp push -f && clasp update-deployment AKfycbz_Hm33Y7FZNPEKupGO5JMCdM4ktVhGL9sfmnB-YbmzAaCIsl8ZEulDa3ahswKlRqQJvQ -d "<notes>"` (keeps the same link).
+Editor: https://script.google.com/a/macros/sstm-eg.com/s/AKfycbz_Hm33Y7FZNPEKupGO5JMCdM4ktVhGL9sfmnB-YbmzAaCIsl8ZEulDa3ahswKlRqQJvQ/exec
