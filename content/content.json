@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-03.1",
+  "version": "2026-11-03.2",
   "sample": true,
   "app": {
     "title": "دليل الفني",
@@ -14,7 +14,7 @@
   "operations": [
     { "id": "replace-sensor", "title": "تغيير الحساس", "image": "media/op-replace-sensor.svg", "audio": "", "models": ["wrover", "xiao-c3", "xiao-s3", "xiao-s3-plus"] },
     { "id": "replace-device", "title": "تغيير الجهاز", "image": "media/op-replace-device.svg", "audio": "", "models": ["wrover", "xiao-c3", "xiao-s3", "xiao-s3-plus"] },
-    { "id": "mount-battery", "title": "تركيب البطارية", "image": "media/op-mount-battery.svg", "audio": "", "models": ["xiao-s3-plus"] }
+    { "id": "mount-battery", "title": "تركيب البطارية", "image": "media/op-mount-battery.svg", "audio": "", "models": ["wrover"] }
   ],
   "models": [
     { "id": "wrover", "title": "WROVER", "image": "media/model-wrover.svg", "audio": "" },
