@@ -6,7 +6,7 @@
  *    changes, so a saved file never goes stale). Videos support range requests for playback.
  * Cache names must match assets/app.js.
  */
-const SHELL = 'cft-shell-v3';
+const SHELL = 'cft-shell-v4';
 const CONTENT = 'cft-content-v1';
 const MEDIA = 'cft-media-v1';
 const SHELL_FILES = [
@@ -46,31 +46,42 @@ self.addEventListener('fetch', ev => {
   const scope = new URL(self.registration.scope);
   if (req.mode === 'navigate') {
     // Only the guide itself opens from the phone; other pages (e.g. tools/) load normally.
-    if (path === scope.pathname || path === scope.pathname + 'index.html') ev.respondWith(shell(req, scope.href));
+    if (path === scope.pathname || path === scope.pathname + 'index.html') ev.respondWith(shell(ev, req, scope.href));
     return;
   }
   if (path.indexOf(scope.pathname + 'tools/') === 0 || path.indexOf(scope.pathname + 'editor/') === 0) return;
-  ev.respondWith(shell(req, url.origin + path));
+  ev.respondWith(shell(ev, req, url.origin + path));
 });
 
 /**
  * Saved app file at once; a fresh copy is fetched in the background. When the site has a newer
- * version of the file, the pages are told to reload.
+ * version of a file, it is SAVED FIRST and then the pages are told to reload (once, after all the
+ * app files of that visit have been checked), so the reload gets the new files.
  */
-async function shell(req, key) {
+async function shell(ev, req, key) {
   const cache = await caches.open(SHELL);
   const hit = await cache.match(key);
-  const fresh = fetch(req.mode === 'navigate' ? key : req.url, { cache: 'no-cache' }).then(res => {
+  const fresh = fetch(req.mode === 'navigate' ? key : req.url, { cache: 'no-cache' }).then(async res => {
     if (res.ok) {
-      cache.put(key, res.clone()).catch(() => {});
       const was = hit && (hit.headers.get('etag') || hit.headers.get('last-modified'));
       const now = res.headers.get('etag') || res.headers.get('last-modified');
-      if (was && now && was !== now) tellPagesUpdated();
+      try { await cache.put(key, res.clone()); } catch (e) { return res; }
+      if (was && now && was !== now) await tellSoon();
     }
     return res;
   });
-  if (hit) { fresh.catch(() => {}); return hit; }
+  ev.waitUntil(fresh.catch(() => {}));   // keep the worker alive until the new copy is saved
+  if (hit) return hit;
   return fresh;
+}
+
+/** One "updated" message for several changed files: sent when no other change arrives for 800 ms. */
+let tellTimer = null, tellDone = null;
+function tellSoon() {
+  clearTimeout(tellTimer);
+  if (!tellDone) tellDone = new Promise(resolve => { tellSoon.resolve = resolve; });
+  tellTimer = setTimeout(async () => { tellDone = null; await tellPagesUpdated(); tellSoon.resolve(); }, 800);
+  return tellDone;
 }
 
 /** Fresh content when the internet answers within a few seconds, otherwise the saved copy. */
