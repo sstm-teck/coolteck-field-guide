@@ -1,5 +1,5 @@
 {
- "version": "2026-11-08.023444",
+ "version": "2026-11-08.023627",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -20,9 +20,9 @@
  },
  "operations": [
   {
-   "id": "replace-sensor",
-   "title": "تغيير الحساس",
-   "image": "media/op-replace-sensor.svg",
+   "id": "replace-device",
+   "title": "تغيير الجهاز",
+   "image": "media/op-replace-device.svg",
    "audio": "",
    "models": [
     "wrover",
@@ -31,9 +31,9 @@
    ]
   },
   {
-   "id": "replace-device",
-   "title": "تغيير الجهاز",
-   "image": "media/op-replace-device.svg",
+   "id": "replace-sensor",
+   "title": "تغيير الحساس",
+   "image": "media/op-replace-sensor.svg",
    "audio": "",
    "models": [
     "wrover",
@@ -72,71 +72,6 @@
   }
  ],
  "steps": {
-  "replace-sensor": [
-   {
-    "id": "s-11647829",
-    "models": [],
-    "warning": true,
-    "text": "افصل الكهربا عن الجهاز الأول",
-    "image": "media/step-placeholder.svg",
-    "video": "",
-    "audio": ""
-   },
-   {
-    "id": "s-75a56c57",
-    "models": [],
-    "warning": false,
-    "text": "افتح غطا العلبة",
-    "image": "media/step-placeholder.svg",
-    "video": "",
-    "audio": ""
-   },
-   {
-    "id": "s-ab4074da",
-    "models": [],
-    "warning": false,
-    "text": "شوف رقم مكان الحساس القديم واحفظه",
-    "image": "media/step-placeholder.svg",
-    "video": "",
-    "audio": ""
-   },
-   {
-    "id": "s-021d0c17",
-    "models": [],
-    "warning": false,
-    "text": "اسحب فيشة الحساس القديم",
-    "image": "media/step-placeholder.svg",
-    "video": "",
-    "audio": ""
-   },
-   {
-    "id": "s-13ef64d0",
-    "models": [],
-    "warning": false,
-    "text": "ركّب الحساس الجديد في نفس المكان",
-    "image": "media/step-placeholder.svg",
-    "video": "",
-    "audio": ""
-   },
-   {
-    "id": "s-76e97f98",
-    "models": [],
-    "warning": false,
-    "text": "اقفل الغطا ورجّع الكهربا",
-    "image": "media/step-placeholder.svg",
-    "video": "",
-    "audio": ""
-   },
-   {
-    "id": "s-2d07cc43",
-    "models": [],
-    "warning": false,
-    "text": "كلّم المكتب يتأكدوا إن القراية وصلت",
-    "image": "media/step-placeholder.svg",
-    "video": "",
-    "audio": ""
-   }
-  ],
   "replace-device": [
    {
     "id": "s-0e888695",
@@ -206,6 +141,71 @@
     "models": [],
     "warning": false,
     "text": "رجّع الكهربا وكلّم المكتب يربطوا الجهاز الجديد",
+    "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   }
+  ],
+  "replace-sensor": [
+   {
+    "id": "s-11647829",
+    "models": [],
+    "warning": true,
+    "text": "افصل الكهربا عن الجهاز الأول",
+    "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-75a56c57",
+    "models": [],
+    "warning": false,
+    "text": "افتح غطا العلبة",
+    "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-ab4074da",
+    "models": [],
+    "warning": false,
+    "text": "شوف رقم مكان الحساس القديم واحفظه",
+    "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-021d0c17",
+    "models": [],
+    "warning": false,
+    "text": "اسحب فيشة الحساس القديم",
+    "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-13ef64d0",
+    "models": [],
+    "warning": false,
+    "text": "ركّب الحساس الجديد في نفس المكان",
+    "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-76e97f98",
+    "models": [],
+    "warning": false,
+    "text": "اقفل الغطا ورجّع الكهربا",
+    "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-2d07cc43",
+    "models": [],
+    "warning": false,
+    "text": "كلّم المكتب يتأكدوا إن القراية وصلت",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
