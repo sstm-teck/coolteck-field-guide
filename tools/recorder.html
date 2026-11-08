@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Record a sound · Field Guide</title>
+  <style>
+    :root { --brand: #21449A; --red: #B91C1C; --green: #15803D; --ink: #0F172A; --muted: #64748B; --line: #E2E8F0; --bg: #F4F6FB; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink);
+      font: 15px/1.5 system-ui, "Segoe UI", Roboto, Arial, sans-serif; }
+    .box { width: min(400px, calc(100vw - 32px)); background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; text-align: center;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 6px 18px rgba(15, 23, 42, .08); }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+    .big { width: 120px; height: 120px; border-radius: 50%; border: 0; background: var(--brand); color: #fff; cursor: pointer;
+      display: grid; place-items: center; margin: 0 auto 12px; }
+    .big svg { width: 54px; height: 54px; }
+    .big.on { background: var(--red); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 50% { box-shadow: 0 0 0 14px rgba(185, 28, 28, 0); } 0%, 100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, .45); } }
+    .time { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 12px; }
+    audio { width: 100%; margin: 6px 0 14px; }
+    .row { display: flex; gap: 8px; }
+    .btn { flex: 1; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    .btn.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .err { background: #FDECEC; color: var(--red); border-radius: 10px; padding: 10px 12px; font-size: 13px; text-align: left; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Record a sound</h1>
+    <p>Speak close to the microphone, short and clear (Egyptian Arabic).</p>
+    <p id="hint" hidden>Opened on its own: after recording, press Download, then use Upload in the editor.</p>
+    <div id="err" class="err" hidden></div>
+    <div id="recUi">
+      <button class="big" id="recBtn" aria-label="Record"></button>
+      <div class="time" id="time">0:00</div>
+    </div>
+    <div id="doneUi" hidden>
+      <audio id="play" controls></audio>
+      <div class="row"><button class="btn" id="again">Record again</button><button class="btn primary" id="use">Use this sound</button><a class="btn primary" id="save" download="recording" hidden style="display:grid;place-items:center;text-decoration:none">Download</a></div>
+    </div>
+  </div>
+  <script>
+  (function () {
+    'use strict';
+    // Opened by the Field Guide Editor (Google Apps Script). The finished sound goes back to the
+    // editor window only, and only when it is a Google Apps Script page.
+    const MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+    const STOP = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
+    const MAX_SECONDS = 120;
+    const $ = id => document.getElementById(id);
+    const target = new URLSearchParams(location.search).get('o') || '';
+    const okTarget = /^https:\/\/[a-z0-9-]+\.googleusercontent\.com$/.test(target);
+    let rec = null, stream = null, chunks = [], started = 0, timer = null, blob = null;
+
+    function fail(msg) { $('err').textContent = msg; $('err').hidden = false; }
+    // Without a link back to the editor the sound can still be downloaded and uploaded there.
+    const linked = !!window.opener && okTarget;
+    if (!linked) { $('use').hidden = true; $('save').hidden = false; $('hint').hidden = false; }
+    $('recBtn').innerHTML = MIC;
+
+    async function start() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      } catch (e) {
+        fail('The microphone is blocked. Click the lock icon next to the address, allow the microphone, then try again.');
+        return;
+      }
+      const mime = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+      if (!mime) { fail('This browser cannot record. Use Chrome or Edge.'); stream.getTracks().forEach(t => t.stop()); return; }
+      chunks = [];
+      rec = new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: 32000 });
+      rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+      rec.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        clearInterval(timer);
+        $('recBtn').classList.remove('on'); $('recBtn').innerHTML = MIC;
+        blob = new Blob(chunks, { type: mime.split(';')[0] });
+        if (blob.size < 1500) { fail('The recording is empty. Try again.'); return; }
+        $('play').src = URL.createObjectURL(blob);
+        $('save').href = $('play').src;
+        $('save').download = 'recording.' + (blob.type.indexOf('mp4') !== -1 ? 'm4a' : blob.type.indexOf('ogg') !== -1 ? 'ogg' : 'weba');
+        $('recUi').hidden = true; $('doneUi').hidden = false;
+      };
+      rec.start();
+      started = Date.now();
+      $('err').hidden = true;
+      $('recBtn').classList.add('on'); $('recBtn').innerHTML = STOP;
+      timer = setInterval(() => {
+        const s = Math.floor((Date.now() - started) / 1000);
+        $('time').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+        if (s >= MAX_SECONDS) rec.stop();
+      }, 250);
+    }
+
+    $('recBtn').onclick = () => { if (rec && rec.state === 'recording') rec.stop(); else start(); };
+    $('again').onclick = () => { blob = null; $('doneUi').hidden = true; $('recUi').hidden = false; $('time').textContent = '0:00'; start(); };
+    $('use').onclick = () => {
+      if (!blob) return;
+      if (!window.opener || window.opener.closed || !okTarget) { fail('The editor window was closed. Open the recorder again from the editor.'); return; }
+      window.opener.postMessage({ type: 'cft-recording', blob: blob }, target);
+      window.close();
+    };
+  })();
+  </script>
+</body>
+</html>

@@ -43,7 +43,13 @@ self.addEventListener('fetch', ev => {
   const path = url.pathname;
   if (path.endsWith('/content/content.json')) { ev.respondWith(contentFirst(url.origin + path)); return; }
   if (path.indexOf('/media/') !== -1) { ev.respondWith(media(req, url.origin + path)); return; }
-  if (req.mode === 'navigate') { ev.respondWith(shell(req, new URL('./', self.registration.scope).href)); return; }
+  const scope = new URL(self.registration.scope);
+  if (req.mode === 'navigate') {
+    // Only the guide itself opens from the phone; other pages (e.g. tools/) load normally.
+    if (path === scope.pathname || path === scope.pathname + 'index.html') ev.respondWith(shell(req, scope.href));
+    return;
+  }
+  if (path.indexOf(scope.pathname + 'tools/') === 0 || path.indexOf(scope.pathname + 'editor/') === 0) return;
   ev.respondWith(shell(req, url.origin + path));
 });
 

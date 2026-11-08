@@ -131,7 +131,7 @@
       '<div class="s-label"><span>' + KIND_LABEL[kind] + '</span>' + (value ? '<span class="mono" title="' + esc(value) + '">' + esc(value.slice(0, 6)) + '…</span>' : '') + '</div>' +
       '<div class="s-view">' + view + '</div>' +
       '<div class="s-act"><button class="btn btn-sm" data-act="pick">' + I.upload + (value ? 'Change' : 'Upload') + '</button>' +
-      (kind === 'audio' ? '<button class="btn btn-sm' + (recHere ? ' rec-on' : '') + '" data-act="record">' + I.mic + (recHere ? 'Stop' : 'Record') + '</button>' : '') +
+      (kind === 'audio' ? '<button class="btn btn-sm' + (recHere ? ' rec-on' : '') + '" data-act="record">' + I.mic + (recHere ? 'Recording…' : 'Record') + '</button>' : '') +
       (value ? '<button class="btn btn-sm btn-ghost" data-act="unattach" title="Remove">' + I.trash + '</button>' : '') + '</div></div>';
   }
   const slotInfo = el => { const s = el.closest('.slot'); return { el: s, table: s.dataset.table, id: s.dataset.id, field: s.dataset.field, kind: s.dataset.kind }; };
@@ -200,39 +200,33 @@
   });
 
   // ---------------------------------------------------------------- recording
-  async function toggleRecord(info) {
-    if (S.rec) {
-      const same = S.rec.table === info.table && S.rec.id === info.id && S.rec.field === info.field;
-      S.rec.recorder.stop();
-      if (same) return;
+  // Google runs this page in a frame that blocks the microphone, so recording happens in a small
+  // window on the guide's own site (tools/recorder.html). It sends the finished sound back here.
+  function toggleRecord(info) {
+    if (S.rec && S.rec.win && !S.rec.win.closed) {
+      S.rec.win.focus();
+      if (S.rec.table === info.table && S.rec.id === info.id && S.rec.field === info.field) return;
     }
-    let stream;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch (e) {
-      toast('The browser did not allow the microphone here. Record the sound on your phone and use Upload.', true);
-      return;
-    }
-    const mime = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4'].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
-    if (!mime) { stream.getTracks().forEach(t => t.stop()); toast('This browser cannot record. Use Upload.', true); return; }
-    const recorder = new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: 32000 });
-    const chunks = [];
-    recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
-    recorder.onstop = () => {
-      stream.getTracks().forEach(t => t.stop());
-      const r = S.rec;
-      S.rec = null;
-      renderKeepingFocus();
-      const blob = new Blob(chunks, { type: mime.split(';')[0] });
-      if (blob.size < 1500) { toast('The recording is empty. Try again.', true); return; }
-      const el = document.querySelector('.slot[data-table="' + r.table + '"][data-id="' + CSS.escape(r.id) + '"][data-field="' + r.field + '"]');
-      attach({ table: r.table, id: r.id, field: r.field, kind: 'audio', el: el }, blob);
-    };
-    S.rec = { table: info.table, id: info.id, field: info.field, recorder: recorder };
-    recorder.start();
+    const url = S.d.site + 'tools/recorder.html?o=' + encodeURIComponent(location.origin);
+    const win = window.open(url, 'cft-recorder', 'width=440,height=600');
+    if (!win) { toast('The browser blocked the recorder window. Allow pop-ups for this page and press Record again.', true); return; }
+    S.rec = { table: info.table, id: info.id, field: info.field, win: win };
     renderKeepingFocus();
-    toast('Recording… press Stop when done.');
+    const watch = setInterval(() => {
+      if (!S.rec || S.rec.win !== win) { clearInterval(watch); return; }
+      if (win.closed) { clearInterval(watch); S.rec = null; renderKeepingFocus(); }
+    }, 800);
   }
+  window.addEventListener('message', ev => {
+    if (!S.d || ev.origin !== new URL(S.d.site).origin) return;
+    const m = ev.data || {};
+    if (m.type !== 'cft-recording' || !(m.blob instanceof Blob) || !S.rec) return;
+    const r = S.rec;
+    S.rec = null;
+    renderKeepingFocus();
+    const el = document.querySelector('.slot[data-table="' + r.table + '"][data-id="' + CSS.escape(r.id) + '"][data-field="' + r.field + '"]');
+    attach({ table: r.table, id: r.id, field: r.field, kind: 'audio', el: el }, m.blob);
+  });
 
   // ---------------------------------------------------------------- routing
   const hasHistory = () => !!(window.google && google.script && google.script.history);
@@ -496,7 +490,7 @@
     insertStep: d => change('apiCreate', ['Steps', { Job: S.arg, after: d.id }], 'Step added'),
     dupStep: d => change('apiDuplicateStep', [d.id], 'Step duplicated'),
     delStep: d => confirmBox('Delete this step?', 'The step is removed from the job.', 'Delete step', () => change('apiDelete', ['Steps', d.id], 'Step deleted')),
-    pick: (d, ev, el) => { if (S.rec) { toast('Stop the recording first.', true); return; } pick(slotInfo(el)); },
+    pick: (d, ev, el) => pick(slotInfo(el)),
     record: (d, ev, el) => toggleRecord(slotInfo(el)),
     unattach: (d, ev, el) => { const i = slotInfo(el); change('apiAttach', [i.table, i.id, i.field, null], KIND_LABEL[i.kind] + ' removed'); },
     publish: () => openPublish(),
@@ -542,7 +536,7 @@
   });
   $('#modal').addEventListener('mousedown', ev => { if (ev.target === $('#modal')) closeModal(); });
   document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && S.modal) closeModal(); });
-  window.addEventListener('beforeunload', ev => { if (busy || S.rec || S.publishing) { ev.preventDefault(); ev.returnValue = ''; } });
+  window.addEventListener('beforeunload', ev => { if (busy || S.publishing) { ev.preventDefault(); ev.returnValue = ''; } });
 
   // ---------------------------------------------------------------- start
   const bar = document.createElement('div');
