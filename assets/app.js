@@ -240,7 +240,7 @@
     const ms = modelsFor(o).filter(m => stepsFor(o.id, m.id).length);
     if (ms.length === 1) return replace(link(o.id, ms[0].id, 1));
     renderTop(o.title);
-    showNav('');
+    showNav('<a class="nav-btn" href="#/" data-tap="1">' + I.prev + 'رجوع</a>');
     $('#main').innerHTML = ask('model', 'أنهي جهاز؟') + grid(ms.map(m => card(link(o.id, m.id, 1), m.image, m.title)));
     autoSpeak(prompt('model').audio);
   }
