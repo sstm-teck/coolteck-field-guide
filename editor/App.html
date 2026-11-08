@@ -180,18 +180,31 @@
     return out.size < file.size ? out : file;
   }
   const CHUNK = 1024 * 1024;   // same as UPLOAD_CHUNK in 02_Media.js
+  // One upload at a time: others wait in this queue (their box shows "Waiting") so two big files
+  // never compete for the browser and the connection.
+  let uploadQueue = Promise.resolve();
+
   /**
    * Uploads in 1 MB pieces so the box can show real progress: the server passes each piece to Drive,
    * then the finished file is put into the field. The file's name is its SHA-256 fingerprint.
    */
-  async function attach(info, file) {
+  function attach(info, file) {
     const type = String(file.type || '').split(';')[0];
     if (type.split('/')[0] !== info.kind) { toast('This place takes a ' + KIND_LABEL[info.kind].toLowerCase() + '.', true); return; }
     if (info.kind === 'audio' && AUDIO_OK.indexOf(type) === -1) { toast('This sound format (' + type + ') does not play on phones. Use MP3 or M4A, or record here.', true); return; }
     const key = slotKey(info);
-    if (S.uploads[key]) return;
-    S.uploads[key] = { pct: 0, label: info.kind === 'image' ? 'Making the photo smaller' : 'Preparing' };
+    if (S.uploads[key]) { toast('This box is already uploading. Wait for it to finish.', true); return; }
+    const busyBefore = Object.keys(S.uploads).length;
+    S.uploads[key] = { pct: 0, label: 'Waiting' };
     renderKeepingFocus();
+    if (busyBefore) toast('Queued: it starts when the current upload finishes.');
+    const run = () => uploadOne(info, file, key, type);
+    uploadQueue = uploadQueue.then(run, run);
+    return uploadQueue;
+  }
+  async function uploadOne(info, file, key, type) {
+    S.uploads[key] = { pct: 0, label: info.kind === 'image' ? 'Making the photo smaller' : 'Preparing' };
+    showProgress(info);
     try {
       let blob = file;
       try { if (info.kind === 'image') blob = await shrinkImage(file); } catch (e) { blob = file; }
