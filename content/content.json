@@ -1,12 +1,12 @@
 {
- "version": "2026-11-08.030016",
+ "version": "2026-11-08.030204",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
   "prompts": {
    "operation": {
     "text": "هتعمل إيه؟",
-    "audio": "media/5d5b7eb819773e1c.weba"
+    "audio": ""
    },
    "model": {
     "text": "أنهي جهاز؟",
