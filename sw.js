@@ -6,7 +6,7 @@
  *    changes, so a saved file never goes stale). Videos support range requests for playback.
  * Cache names must match assets/app.js.
  */
-const SHELL = 'cft-shell-v4';
+const SHELL = 'cft-shell-v5';
 const CONTENT = 'cft-content-v1';
 const MEDIA = 'cft-media-v1';
 const SHELL_FILES = [
@@ -24,10 +24,12 @@ self.addEventListener('install', ev => {
 });
 
 self.addEventListener('activate', ev => {
-  ev.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => /^cft-shell-/.test(k) && k !== SHELL).map(k => caches.delete(k))))
-    .then(() => self.clients.claim())
-    .then(tellPagesUpdated));
+  ev.waitUntil(caches.keys().then(async keys => {
+    const old = keys.filter(k => /^cft-shell-/.test(k) && k !== SHELL);
+    await Promise.all(old.map(k => caches.delete(k)));
+    await self.clients.claim();
+    if (old.length) await tellPagesUpdated();     // a real update, not the first visit
+  }));
 });
 
 /** Asks open pages to reload; they do it on the jobs or models screen, never in the middle of a guide. */
@@ -41,8 +43,8 @@ self.addEventListener('fetch', ev => {
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
   const path = url.pathname;
-  if (path.endsWith('/content/content.json')) { ev.respondWith(contentFirst(url.origin + path)); return; }
-  if (path.indexOf('/media/') !== -1) { ev.respondWith(media(req, url.origin + path)); return; }
+  if (path.endsWith('/content/content.json')) { ev.respondWith(contentFirst(ev, url.origin + path)); return; }
+  if (path.indexOf('/media/') !== -1) { ev.respondWith(media(ev, req, url.origin + path)); return; }
   const scope = new URL(self.registration.scope);
   if (req.mode === 'navigate') {
     // Only the guide itself opens from the phone; other pages (e.g. tools/) load normally.
@@ -61,12 +63,16 @@ self.addEventListener('fetch', ev => {
 async function shell(ev, req, key) {
   const cache = await caches.open(SHELL);
   const hit = await cache.match(key);
+  const hitCopy = hit ? hit.clone() : null;   // the page reads `hit`; compare against a separate copy
   const fresh = fetch(req.mode === 'navigate' ? key : req.url, { cache: 'no-cache' }).then(async res => {
     if (res.ok) {
-      const was = hit && (hit.headers.get('etag') || hit.headers.get('last-modified'));
-      const now = res.headers.get('etag') || res.headers.get('last-modified');
-      try { await cache.put(key, res.clone()); } catch (e) { return res; }
-      if (was && now && was !== now) await tellSoon();
+      // GitHub Pages gives every file a new ETag on each deploy (even a content-only publish), so the
+      // file's bytes are compared instead.
+      const changed = hitCopy ? !(await sameBytes(hitCopy, res.clone())) : false;
+      if (!hit || changed) {
+        try { await cache.put(key, res.clone()); } catch (e) { return res; }
+      }
+      if (changed) await tellSoon();
     }
     return res;
   });
@@ -75,22 +81,36 @@ async function shell(ev, req, key) {
   return fresh;
 }
 
+async function sameBytes(a, b) {
+  const [x, y] = await Promise.all([a.arrayBuffer(), b.arrayBuffer()]);
+  if (x.byteLength !== y.byteLength) return false;
+  const u = new Uint8Array(x), v = new Uint8Array(y);
+  for (let i = 0; i < u.length; i++) if (u[i] !== v[i]) return false;
+  return true;
+}
+
 /** One "updated" message for several changed files: sent when no other change arrives for 800 ms. */
-let tellTimer = null, tellDone = null;
+let tellTimer = null, tellBatch = null;
 function tellSoon() {
   clearTimeout(tellTimer);
-  if (!tellDone) tellDone = new Promise(resolve => { tellSoon.resolve = resolve; });
-  tellTimer = setTimeout(async () => { tellDone = null; await tellPagesUpdated(); tellSoon.resolve(); }, 800);
-  return tellDone;
+  if (!tellBatch) { let done; tellBatch = { p: new Promise(r => { done = r; }), done: null }; tellBatch.done = done; }
+  const batch = tellBatch;
+  tellTimer = setTimeout(async () => {
+    if (tellBatch === batch) tellBatch = null;
+    await tellPagesUpdated();
+    batch.done();
+  }, 800);
+  return batch.p;
 }
 
 /** Fresh content when the internet answers within a few seconds, otherwise the saved copy. */
-async function contentFirst(key) {
+async function contentFirst(ev, key) {
   const cache = await caches.open(CONTENT);
-  const net = fetch(key, { cache: 'no-store' }).then(res => {
-    if (res.ok) cache.put(key, res.clone()).catch(() => {});
+  const net = fetch(key, { cache: 'no-store' }).then(async res => {
+    if (res.ok) await cache.put(key, res.clone()).catch(() => {});
     return res;
   });
+  ev.waitUntil(net.catch(() => {}));
   const saved = await cache.match(key);
   if (!saved) return net;
   const timer = new Promise(resolve => setTimeout(() => resolve(null), CONTENT_TIMEOUT_MS));
@@ -103,16 +123,29 @@ async function contentFirst(key) {
 }
 
 /** Pictures, videos and sounds: from the phone when saved, otherwise downloaded and saved. */
-async function media(req, key) {
+const downloading = {};
+async function media(ev, req, key) {
   const cache = await caches.open(MEDIA);
   const hit = await cache.match(key);
   const range = req.headers.get('range');
   if (hit) return range ? partial(hit, range) : hit;
-  // Not saved yet: download the whole file (even when a player asked for a range) and stream it to
-  // the page while it is being saved, so the page can show download progress.
+  if (range) {
+    // Players (and iPhones in particular) need a real 206 answer: download and save the whole file
+    // once, then answer from the saved copy.
+    downloading[key] = downloading[key] || fetch(key).then(async res => {
+      if (res.ok) { try { await cache.put(key, res.clone()); } catch (e) { /* storage full */ } }
+      return res;
+    }).finally(() => { setTimeout(() => { delete downloading[key]; }, 0); });
+    ev.waitUntil(downloading[key].catch(() => {}));
+    const res = await downloading[key];
+    if (!res.ok) return res;
+    const saved = await cache.match(key);
+    return partial(saved || res.clone(), range);
+  }
+  // Not saved yet and no range: stream it to the page while it is being saved (download progress).
   const res = await fetch(key);
   if (!res.ok) return res;
-  cache.put(key, res.clone()).catch(() => { /* phone storage full: still show it */ });
+  ev.waitUntil(cache.put(key, res.clone()).catch(() => { /* phone storage full: still show it */ }));
   return res;
 }
 

@@ -27,7 +27,7 @@
   };
 
   // ---------------------------------------------------------------- state
-  const S = { d: null, page: 'jobs', arg: null, blobs: {}, loading: {}, uploads: {}, rec: null, modal: null, publishing: false };
+  const S = { d: null, page: 'jobs', arg: null, blobs: {}, loading: {}, noPreview: {}, uploads: {}, rec: null, modal: null, publishing: false };
 
   const $ = sel => document.querySelector(sel);
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -103,6 +103,7 @@
     if (S.blobs[name]) return S.blobs[name];
     const m = S.d.media.find(x => x.name === name);
     if (m && m.published) return S.d.site + 'media/' + encodeURIComponent(name);
+    if (m && m.drive && m.type === 'video' && m.bytes > 5 * 1024 * 1024) { S.noPreview[name] = 'Big video: preview after Publish'; return ''; }
     if (m && m.drive && !S.loading[name]) {
       S.loading[name] = true;
       call('apiMediaData', name).then(r => {
@@ -110,7 +111,7 @@
         for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
         if (!S.blobs[name]) S.blobs[name] = URL.createObjectURL(new Blob([bytes], { type: r.mime }));
         renderKeepingFocus();
-      }, () => { /* preview only */ });
+      }, () => { S.noPreview[name] = 'Preview not available'; renderKeepingFocus(); });
     }
     return '';
   }
@@ -125,7 +126,7 @@
     let view;
     if (up) view = progressHtml(up);
     else if (!value) view = '<span class="empty-ico">' + KIND_ICON[kind] + '</span>';
-    else if (!src) view = '<span class="muted" style="font-size:12px">Loading preview…</span>';
+    else if (!src) view = '<span class="muted" style="font-size:12px">' + esc(S.noPreview[value] || 'Loading preview…') + '</span>';
     else if (kind === 'image') view = '<img src="' + esc(src) + '" alt="">';
     else if (kind === 'video') view = '<video src="' + esc(src) + '" controls muted playsinline preload="metadata"></video>';
     else view = '<audio src="' + esc(src) + '" controls preload="none"></audio>';
@@ -250,7 +251,8 @@
   function toggleRecord(info) {
     if (S.rec && S.rec.win && !S.rec.win.closed) {
       S.rec.win.focus();
-      if (S.rec.table === info.table && S.rec.id === info.id && S.rec.field === info.field) return;
+      if (!(S.rec.table === info.table && S.rec.id === info.id && S.rec.field === info.field)) toast('Finish or close the open recorder first.', true);
+      return;
     }
     const url = S.d.site + 'tools/recorder.html?o=' + encodeURIComponent(location.origin);
     const win = window.open(url, 'cft-recorder', 'width=440,height=600');
@@ -259,13 +261,17 @@
     renderKeepingFocus();
     const watch = setInterval(() => {
       if (!S.rec || S.rec.win !== win) { clearInterval(watch); return; }
-      if (win.closed) { clearInterval(watch); S.rec = null; renderKeepingFocus(); }
+      if (win.closed) {
+        clearInterval(watch);
+        // the finished sound may still be on its way: give it a moment before forgetting the box
+        setTimeout(() => { if (S.rec && S.rec.win === win) { S.rec = null; renderKeepingFocus(); } }, 2000);
+      }
     }, 800);
   }
   window.addEventListener('message', ev => {
     if (!S.d || ev.origin !== new URL(S.d.site).origin) return;
     const m = ev.data || {};
-    if (m.type !== 'cft-recording' || !(m.blob instanceof Blob) || !S.rec) return;
+    if (m.type !== 'cft-recording' || !(m.blob instanceof Blob) || !S.rec || ev.source !== S.rec.win) return;
     const r = S.rec;
     S.rec = null;
     renderKeepingFocus();
@@ -293,6 +299,7 @@
   /** Re-renders without losing the field the admin is typing in. */
   function renderKeepingFocus() {
     const a = document.activeElement;
+    if (a && isTextField(a)) a.dataset.keep = '1';
     const key = a && a.dataset && a.dataset.key;
     const keep = key ? { key: key, value: a.value, start: a.selectionStart, end: a.selectionEnd } : null;
     render();
@@ -555,14 +562,24 @@
     fn(el.dataset, ev, el);
   });
   // Text fields save when the admin leaves them.
-  document.addEventListener('change', ev => {
-    const t = ev.target;
-    if (t.dataset.set) {
-      change('apiSet', [t.dataset.set, t.dataset.id, { [t.dataset.f]: t.value }], 'Saved');
-    } else if (t.dataset.setting) {
-      change('apiSetSettings', [{ [t.dataset.setting]: t.value }], 'Saved');
-    }
-  });
+  /** What the sheet holds for a text field (to know whether the field has an unsaved change). */
+  function storedValue(t) {
+    if (t.dataset.setting) return String(S.d.settings[t.dataset.setting] || '');
+    const rows = { Jobs: S.d.jobs, Models: S.d.models, Steps: S.d.steps }[t.dataset.set];
+    const r = rows && rows.find(x => x.ID === t.dataset.id);
+    return r ? String(r[t.dataset.f] || '') : '';
+  }
+  const isTextField = t => !!(t && t.dataset && (t.dataset.set || t.dataset.setting));
+  const unsaved = t => isTextField(t) && t.value.trim() !== storedValue(t).trim();
+  function saveField(t) {
+    if (!unsaved(t)) return;
+    if (t.dataset.set) change('apiSet', [t.dataset.set, t.dataset.id, { [t.dataset.f]: t.value }], 'Saved');
+    else change('apiSetSettings', [{ [t.dataset.setting]: t.value }], 'Saved');
+  }
+  // Text saves when the admin leaves the field. Comparing with the sheet's value (instead of the
+  // browser's change event) also catches text typed while the page re-drew itself. A field that is
+  // only being re-drawn (marked keep) does not count as left.
+  document.addEventListener('focusout', ev => { if (ev.target.dataset && ev.target.dataset.keep) return; saveField(ev.target); });
   document.addEventListener('submit', ev => {
     const f = ev.target;
     ev.preventDefault();
@@ -581,7 +598,7 @@
   });
   $('#modal').addEventListener('mousedown', ev => { if (ev.target === $('#modal')) closeModal(); });
   document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && S.modal) closeModal(); });
-  window.addEventListener('beforeunload', ev => { if (busy || S.publishing || Object.keys(S.uploads).length) { ev.preventDefault(); ev.returnValue = ''; } });
+  window.addEventListener('beforeunload', ev => { if (busy || S.publishing || Object.keys(S.uploads).length || unsaved(document.activeElement)) { ev.preventDefault(); ev.returnValue = ''; } });
 
   // ---------------------------------------------------------------- start
   const bar = document.createElement('div');

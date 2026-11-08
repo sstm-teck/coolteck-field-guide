@@ -110,7 +110,6 @@ function uploadChunk_(id, offset, data) {
     try { DriveApp.getFileById(file.id).setTrashed(true); } catch (e) { /* best effort */ }
     throw new Error('The file arrived incomplete (' + (file.size || 0) + ' of ' + up.size + ' bytes). Try again.');
   }
-  cache.remove('up:' + id);
   withLock_(() => {
     const rows = readTable_('Media');
     const row = rows.find(r => r.Name === up.name);
@@ -120,6 +119,7 @@ function uploadChunk_(id, offset, data) {
     const rec = { Name: up.name, Type: up.kind, Bytes: up.size, 'Drive ID': file.id, Published: row ? row.Published : 'No', 'Uploaded by': up.user, Time: new Date() };
     if (row) { Object.assign(row, rec); writeTable_('Media', rows); } else appendRow_('Media', rec);
   });
+  cache.remove('up:' + id);
   return { done: true, name: up.name };
 }
 

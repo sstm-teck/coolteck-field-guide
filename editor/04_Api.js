@@ -96,7 +96,9 @@ function apiCreate(table, rec) {
       if (!readTable_('Jobs').some(j => j.ID === job)) throw new Error('This job no longer exists.');
       const rows = readTable_('Steps');
       const mine = rows.filter(s => s.Job === job).sort(byOrder_);
-      const at = rec.after ? mine.findIndex(s => s.ID === rec.after) + 1 : mine.length;
+      const after = rec.after ? mine.findIndex(s => s.ID === rec.after) : -1;
+      if (rec.after && after === -1) throw new Error('That step was deleted. Reload the page.');
+      const at = rec.after ? after + 1 : mine.length;
       const step = { ID: newStepId_(), Job: job, Models: '', Warning: 'No', Text: '', Picture: '', Video: '', Sound: '' };
       mine.splice(at, 0, step);
       mine.forEach((s, i) => { s.Order = i + 1; });
@@ -230,6 +232,7 @@ function apiDuplicateStep(id) {
  */
 function apiDelete(table, id) {
   requireStaff_();
+  if (['Jobs', 'Models', 'Steps'].indexOf(table) === -1) throw new Error('Unknown table: ' + table);
   return withLock_(() => {
     const rows = readTable_(table);
     const row = rows.find(r => r.ID === id);
@@ -302,5 +305,6 @@ function apiSetToken(token) {
 
 function apiPublish() {
   requireStaff_();
-  return withLock_(() => ({ result: publish_(), data: payload_() }));
+  const result = publish_();   // takes the lock only for its short sheet reads and writes
+  return { result: result, data: payload_() };
 }

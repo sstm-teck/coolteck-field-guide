@@ -96,7 +96,13 @@
       }, 250);
     }
 
-    $('recBtn').onclick = () => { if (rec && rec.state === 'recording') rec.stop(); else start(); };
+    let starting = false;   // a second tap while the microphone permission is asked would open two streams
+    $('recBtn').onclick = async () => {
+      if (rec && rec.state === 'recording') { rec.stop(); return; }
+      if (starting) return;
+      starting = true;
+      try { await start(); } finally { starting = false; }
+    };
     $('again').onclick = () => { blob = null; $('doneUi').hidden = true; $('recUi').hidden = false; $('time').textContent = '0:00'; start(); };
     $('use').onclick = () => {
       if (!blob) return;

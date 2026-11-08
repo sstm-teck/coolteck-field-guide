@@ -47,6 +47,8 @@
   const stepsFor = (opId, modelId) => ((C.steps || {})[opId] || [])
     .filter(s => !s.models || !s.models.length || s.models.indexOf(modelId) !== -1);
   const mediaOf = s => [s.image, s.video, s.audio].filter(Boolean);
+  /** Models of a job that have at least one step (a job without steps for a model never offers it). */
+  const modelsWithSteps = op => modelsFor(op).filter(m => stepsFor(op.id, m.id).length);
   function allMedia() {
     const out = [];
     const add = u => { if (u) out.push(abs(u)); };
@@ -136,7 +138,8 @@
     if (!res.ok) throw new Error('content ' + res.status);
     const copy = res.clone();
     const data = await res.json();
-    try { if (window.caches) await (await caches.open(CONTENT_CACHE)).put(abs(CONTENT_URL), copy); } catch (e) { /* storage full */ }
+    const worker = navigator.serviceWorker && navigator.serviceWorker.controller;
+    try { if (window.caches && !worker) await (await caches.open(CONTENT_CACHE)).put(abs(CONTENT_URL), copy); } catch (e) { /* storage full */ }
     return data;
   }
   async function loadContent() {
@@ -151,7 +154,9 @@
     return true;
   }
   function firstScreensMedia() {
-    return [].concat((C.operations || []).map(o => o.image), (C.models || []).map(m => m.image)).filter(Boolean).map(abs);
+    const prompts = Object.keys((C.app && C.app.prompts) || {}).map(k => C.app.prompts[k].audio);
+    return [].concat((C.operations || []).map(o => o.image), (C.operations || []).map(o => o.audio),
+      (C.models || []).map(m => m.image), (C.models || []).map(m => m.audio), prompts).filter(Boolean).map(abs);
   }
   /** Quietly checks for newer content when the phone is back online or the app is reopened. */
   async function checkForUpdate() {
@@ -177,7 +182,7 @@
   function stopSound() {
     player.pause();
     document.querySelectorAll('.speak.fetching').forEach(b => b.classList.remove('fetching'));
-    if (playingBtn) { playingBtn.classList.remove('playing'); playingBtn.innerHTML = I.speaker; playingBtn = null; }
+    if (playingBtn) { playingBtn.classList.remove('playing'); playingBtn.innerHTML = I.speaker; playingBtn.setAttribute('aria-label', 'اسمع'); playingBtn = null; }
   }
   function playSound(src, btn) {
     stopSound();
@@ -186,10 +191,19 @@
     if (btn) btn.classList.add('fetching');
     player.play().then(() => {
       playingBtn = btn || null;
-      if (btn) { btn.classList.remove('fetching'); btn.classList.add('playing'); btn.innerHTML = I.stop; }
+      if (btn) { btn.classList.remove('fetching'); btn.classList.add('playing'); btn.innerHTML = I.stop; btn.setAttribute('aria-label', 'وقّف'); }
     }, () => { if (btn) btn.classList.remove('fetching'); /* blocked until the worker taps; the speaker button still works */ });
   }
   player.addEventListener('ended', stopSound);
+  // iPhones only let a sound element play from code after it has played once inside a tap.
+  let soundUnlocked = false;
+  const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+  function unlockSound() {
+    if (soundUnlocked || !player.paused) return;
+    soundUnlocked = true;
+    player.src = SILENT;
+    player.play().then(() => { if (player.src === SILENT) player.pause(); }, () => { soundUnlocked = false; });
+  }
   const speakBtn = src => src ? '<button class="speak" data-act="speak" data-src="' + esc(src) + '" aria-label="اسمع">' + I.speaker + '</button>' : '';
 
   // ---------------------------------------------------------------- routing
@@ -198,7 +212,8 @@
   // #/<job>/<model>/<n>    -> step n
   // #/<job>/<model>/done   -> finished
   function route() {
-    const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
+    const dec = x => { try { return decodeURIComponent(x); } catch (e) { return x; } };
+    const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(dec);
     if (!parts.length) return { page: 'home' };
     if (parts.length === 1) return { page: 'models', op: parts[0] };
     if (parts[2] === 'done') return { page: 'done', op: parts[0], model: parts[1] };
@@ -255,21 +270,21 @@
   function renderHome() {
     renderTop();
     showNav('');
-    const ops = (C.operations || []).filter(o => modelsFor(o).length && (C.steps || {})[o.id]);
+    const ops = (C.operations || []).filter(o => modelsWithSteps(o).length);
     $('#main').innerHTML = ask('operation', 'هتعمل إيه؟') +
       (ops.length ? grid(ops.map(o => card(opLink(o), o.image, o.title, o.audio))) : '<div class="empty">لسه مفيش شغلانات</div>');
     autoSpeak(prompt('operation').audio);
   }
   /** A job with one model goes straight to its steps. */
   function opLink(o) {
-    const ms = modelsFor(o);
+    const ms = modelsWithSteps(o);
     return ms.length === 1 ? link(o.id, ms[0].id, 1) : link(o.id);
   }
 
   function renderModels(r) {
     const o = opById(r.op);
     if (!o) return replace('#/');
-    const ms = modelsFor(o).filter(m => stepsFor(o.id, m.id).length);
+    const ms = modelsWithSteps(o);
     if (ms.length === 1) return replace(link(o.id, ms[0].id, 1));
     renderTop(o.title);
     showNav('<a class="nav-btn" href="#/" data-tap="1">' + I.prev + 'رجوع</a>');
@@ -297,7 +312,7 @@
       '<div id="savedBadge"></div>';
 
     const last = n === total;
-    const back = n > 1 ? link(o.id, m.id, n - 1) : (modelsFor(o).length > 1 ? link(o.id) : '#/');
+    const back = n > 1 ? link(o.id, m.id, n - 1) : (modelsWithSteps(o).length > 1 ? link(o.id) : '#/');
     showNav('<a class="nav-btn" href="' + back + '" data-tap="1">' + I.prev + 'رجوع</a>' +
       (last ? '<a class="nav-btn next finish" href="' + link(o.id, m.id, 'done') + '" data-tap="1">' + I.check + 'خلصت</a>'
         : '<a class="nav-btn next" href="' + link(o.id, m.id, n + 1) + '" data-tap="1">التالي' + I.next + '</a>'));
@@ -366,7 +381,7 @@
   }
 
   /** Saves the whole guide (this job + model) on the phone and shows its state under the step. */
-  let savingKey = '';
+  const saving = new Set();
   async function saveGuide(steps, now) {
     const first = now ? mediaOf(now) : [];
     const urls = Array.from(new Set(first.concat(...steps.map(mediaOf)).map(abs)));
@@ -377,10 +392,11 @@
     };
     if (!urls.length || !window.caches) return;
     if (await isCached(urls)) { badge('ok', I.check, 'الدليل ده متحفظ على الموبايل'); return; }
-    if (savingKey === key) { badge('busy', I.saved, 'بيتحفظ…'); return; }
-    savingKey = key;
-    const ok = await cacheUrls(urls, (d, t) => { if (savingKey === key) badge('busy', I.saved, 'بيتحفظ ' + num(d) + ' من ' + num(t)); });
-    savingKey = '';
+    if (saving.has(key)) { badge('busy', I.saved, 'بيتحفظ…'); return; }
+    saving.add(key);
+    const here = () => location.hash.split('/').slice(0, 3).join('/') === key;
+    const ok = await cacheUrls(urls, (d, t) => { if (here()) badge('busy', I.saved, 'بيتحفظ ' + num(d) + ' من ' + num(t)); });
+    saving.delete(key);
     if (location.hash.split('/').slice(0, 3).join('/') !== key) return;
     if (ok) badge('ok', I.check, 'الدليل ده متحفظ على الموبايل');
     else badge('bad', I.offline, 'مش متحفظ كله · افتحه تاني وفيه نت');
@@ -421,7 +437,7 @@
   function render() {
     if (reloadIfFree()) return;
     stopSound();
-    closeZoom();
+    closeZoom(true);
     renderNote();
     const r = route();
     if (r.page === 'home') { if (pending) { applyPending(); return; } renderHome(); }
@@ -432,17 +448,25 @@
   }
 
   // ---------------------------------------------------------------- full-screen picture
+  // The zoomed picture gets its own history entry, so the phone's Back button closes it.
   function openZoom(src) {
     const z = $('#zoom');
     z.innerHTML = '<img src="' + esc(src) + '" alt=""><button class="round" data-act="unzoom" aria-label="اقفل">' + I.cross + '</button>';
     z.hidden = false;
+    history.pushState({ zoom: 1 }, '', location.hash || '#/');
   }
-  function closeZoom() { const z = $('#zoom'); z.hidden = true; z.innerHTML = ''; }
+  function closeZoom(fromBack) {
+    const z = $('#zoom');
+    if (z.hidden) return;
+    z.hidden = true; z.innerHTML = '';
+    if (!fromBack && history.state && history.state.zoom) history.back();
+  }
+  window.addEventListener('popstate', () => { if (!$('#zoom').hidden) closeZoom(true); });
 
   // ---------------------------------------------------------------- events
   document.addEventListener('click', ev => {
     const a = ev.target.closest('a[data-tap]');
-    if (a) { userTap = true; return; }   // normal link; the hash change renders the next screen
+    if (a) { userTap = true; unlockSound(); return; }   // normal link; the hash change renders the next screen
     const el = ev.target.closest('[data-act]');
     if (!el) return;
     const act = el.dataset.act;

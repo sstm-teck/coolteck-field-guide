@@ -51,20 +51,66 @@ function readTable_(name) {
   });
 }
 
-/** Replaces every data row of a table. */
+/**
+ * Replaces every data row of a table, placing each value under its header (so a column moved by
+ * hand in the sheet stays right). Missing headers are added at the end of row 1.
+ */
 function writeTable_(name, rows) {
   const def = TABLES[name];
   const sh = sheet_(name);
+  textFormat_(sh, def);
+  const idx = headerPositions_(sh, def);
+  const width = Math.max.apply(null, def.headers.map(h => idx[h])) + 1;
   const last = sh.getLastRow();
-  if (last > 1) sh.getRange(2, 1, last - 1, def.headers.length).clearContent();
+  if (last > 1) sh.getRange(2, 1, last - 1, width).clearContent();
   if (!rows.length) return;
   if (rows.length + 1 > sh.getMaxRows()) sh.insertRowsAfter(sh.getMaxRows(), rows.length + 1 - sh.getMaxRows() + 200);
-  sh.getRange(2, 1, rows.length, def.headers.length).setValues(rows.map(r => def.headers.map(h => (r[h] === undefined ? '' : r[h]))));
+  sh.getRange(2, 1, rows.length, width).setValues(rows.map(r => {
+    const out = new Array(width).fill('');
+    def.headers.forEach(h => { out[idx[h]] = r[h] === undefined ? '' : r[h]; });
+    return out;
+  }));
+}
+
+/** Header name -> 0-based column, adding any header the sheet is missing. */
+function headerPositions_(sh, def) {
+  const lastCol = Math.max(sh.getLastColumn(), 1);
+  const head = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(cell_);
+  const idx = {};
+  head.forEach((h, i) => { if (h && idx[h] === undefined) idx[h] = i; });
+  let next = head.reduce((m, h, i) => (h ? i + 1 : m), 0);
+  def.headers.forEach(h => {
+    if (idx[h] !== undefined) return;
+    if (sh.getMaxColumns() < next + 1) sh.insertColumnsAfter(sh.getMaxColumns(), next + 1 - sh.getMaxColumns());
+    sh.getRange(1, next + 1).setValue(h);
+    idx[h] = next++;
+  });
+  return idx;
+}
+
+/**
+ * Data cells are plain text, so the sheet never turns what admins type into dates, numbers or
+ * formulas (e.g. an ID "1-2" into a date). Applied once per sheet.
+ */
+function textFormat_(sh, def) {
+  const props = PropertiesService.getScriptProperties();
+  const key = 'TEXT_FORMAT:' + sh.getName();
+  if (props.getProperty(key) === '1') return;
+  def.headers.forEach((h, i) => {
+    if (h !== 'Time') sh.getRange(2, i + 1, sh.getMaxRows() - 1, 1).setNumberFormat('@');
+  });
+  props.setProperty(key, '1');
 }
 
 function appendRow_(name, row) {
   const def = TABLES[name];
-  sheet_(name).appendRow(def.headers.map(h => (row[h] === undefined ? '' : row[h])));
+  const sh = sheet_(name);
+  textFormat_(sh, def);
+  const idx = headerPositions_(sh, def);
+  const width = Math.max.apply(null, def.headers.map(h => idx[h])) + 1;
+  const out = new Array(width).fill('');
+  def.headers.forEach(h => { out[idx[h]] = row[h] === undefined ? '' : row[h]; });
+  sh.appendRow(out);
 }
 
 function withLock_(fn) {
@@ -121,6 +167,11 @@ function log_(action, item, details) {
  * editor starts with what the technicians see. Media already in the repo is listed as published.
  */
 function seedFromSite_() {
+  if (PropertiesService.getScriptProperties().getProperty('SEEDED') === '1') return;
+  withLock_(seedLocked_);
+}
+
+function seedLocked_() {
   const props = PropertiesService.getScriptProperties();
   if (props.getProperty('SEEDED') === '1') return;
   if (readTable_('Jobs').length || readTable_('Models').length || readTable_('Steps').length) {
@@ -208,6 +259,10 @@ function formatSheets() {
 }
 
 /** Simple trigger: someone typed in the sheet by hand, so the page should reload to see it. */
-function onEdit() {
-  try { setSettings_({ last_edit: new Date().toISOString() }); } catch (e) { /* best effort */ }
+function onEdit(e) {
+  try {
+    if (e && e.source) MEMO_.ss = e.source;   // simple triggers may not call openById
+    if (e && e.range && e.range.getSheet().getName() === 'Settings') return;
+    setSettings_({ last_edit: new Date().toISOString() });
+  } catch (err) { /* best effort */ }
 }

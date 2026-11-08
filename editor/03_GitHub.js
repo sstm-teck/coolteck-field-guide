@@ -21,7 +21,9 @@ function gh_(method, path, body, token) {
   if (code >= 400) {
     const msg = data && data.message ? data.message : String(data).slice(0, 200);
     if (code === 401) throw new Error('GitHub refused the token (' + msg + '). Set a new token on the Settings page.');
+    if (code === 403 && /rate limit|secondary/i.test(msg)) throw new Error('GitHub asks to slow down (' + msg + '). Wait a few minutes, then press Publish again.');
     if (code === 403 || code === 404) throw new Error('The token has no write access to ' + REPO + ' (' + msg + '). It needs Contents: Read and write on this repository.');
+    if (code === 422 && /Update is not a fast forward|fast forward/i.test(msg)) throw new Error('The site changed while publishing. Press Publish again.');
     throw new Error('GitHub: ' + msg + ' (' + code + ')');
   }
   return data;
@@ -42,10 +44,10 @@ function buildContent_() {
   const split = v => String(v || '').split(',').map(x => x.trim()).filter(Boolean);
   const models = readTable_('Models').sort(byOrder);
   const modelIds = models.map(m => m.ID);
-  const jobs = readTable_('Jobs').filter(j => j.Show !== 'No').sort(byOrder);
   const steps = readTable_('Steps');
+  const jobs = readTable_('Jobs').filter(j => j.Show !== 'No' && steps.some(x => x.Job === j.ID)).sort(byOrder);
   const out = {
-    version: Utilities.formatDate(new Date(), 'Africa/Cairo', 'yyyy-MM-dd.HHmmss'),
+    version: Utilities.formatDate(new Date(), 'Africa/Cairo', 'yyyy-MM-dd.HHmmss.SSS'),
     app: {
       title: s.title, subtitle: s.subtitle,
       prompts: {
@@ -92,56 +94,97 @@ function whereUsed_(names) {
   return out.join(', ') || 'not found';
 }
 
+const PUBLISH_BUDGET_MS = 4 * 60 * 1000;   // Apps Script stops a run at 6 minutes
+
+/**
+ * One publish at a time (a flag, not the script lock, so editing keeps working meanwhile). Files sent
+ * to GitHub are remembered for 6 hours, so a publish stopped by the time limit continues where it
+ * stopped. Repo media that cannot be sent again from Drive (e.g. files imported from the site) is
+ * never removed.
+ */
 function publish_() {
   if (!token_()) throw new Error('Set the GitHub token on the Settings page first.');
-  const content = buildContent_();
-  const used = usedMedia_(content);
-
-  const head = gh_('get', '/git/ref/heads/' + BRANCH).object.sha;
-  const baseTree = gh_('get', '/git/commits/' + head).tree.sha;
-  const tree = gh_('get', '/git/trees/' + baseTree + '?recursive=1');
-  if (tree.truncated) throw new Error('The repository is too big to read in one go.');
-  const inRepo = {};
-  const filled = {};   // files with content; an empty file in the repo is sent again from Drive
-  tree.tree.forEach(t => { if (t.type === 'blob') { inRepo[t.path] = t.sha; if (t.size > 0) filled[t.path] = true; } });
-
-  const mediaRows = readTable_('Media');
-  const entries = [];
-  const added = [], missing = [];
-  used.forEach(n => {
-    if (filled[MEDIA_DIR + n]) return;
-    const blob = mediaBlob_(n, mediaRows);
-    if (!blob) { missing.push(n); return; }
-    const b = gh_('post', '/git/blobs', { content: Utilities.base64Encode(blob.getBytes()), encoding: 'base64' });
-    entries.push({ path: MEDIA_DIR + n, mode: '100644', type: 'blob', sha: b.sha });
-    added.push(n);
+  const t0 = Date.now();
+  const cache = CacheService.getScriptCache();
+  withLock_(() => {
+    const who = cache.get('publishing');
+    if (who) throw new Error(who + ' is publishing right now. Try again in a minute.');
+    cache.put('publishing', currentUser_() || 'Someone', 7 * 60);
   });
-  if (missing.length) throw new Error('These files are missing or empty: ' + missing.join(', ') + ' (' + whereUsed_(missing) + '). Upload them again, then publish.');
+  try {
+    const snap = withLock_(() => ({ content: buildContent_(), rows: readTable_('Media') }));
+    const content = snap.content, mediaRows = snap.rows;
+    const used = usedMedia_(content);
 
-  const removed = Object.keys(inRepo).filter(p => p.indexOf(MEDIA_DIR) === 0 && used.indexOf(p.slice(MEDIA_DIR.length)) === -1);
-  removed.forEach(p => entries.push({ path: p, mode: '100644', type: 'blob', sha: null }));
+    const head = gh_('get', '/git/ref/heads/' + BRANCH).object.sha;
+    const baseTree = gh_('get', '/git/commits/' + head).tree.sha;
+    const tree = gh_('get', '/git/trees/' + baseTree + '?recursive=1');
+    if (tree.truncated) throw new Error('The repository is too big to read in one go.');
+    const inRepo = {}, filled = {};   // filled = has content; an empty file in the repo is sent again
+    tree.tree.forEach(t => { if (t.type === 'blob') { inRepo[t.path] = t.sha; if (t.size > 0) filled[t.path] = true; } });
 
-  const json = JSON.stringify(content, null, 1) + '\n';
-  const cb = gh_('post', '/git/blobs', { content: json, encoding: 'utf-8' });
-  entries.push({ path: CONTENT_PATH, mode: '100644', type: 'blob', sha: cb.sha });
+    const entries = [], added = [], missing = [], waiting = [];
+    let sent = 0;
+    used.forEach(n => {
+      if (filled[MEDIA_DIR + n]) return;
+      let sha = cache.get('blob:' + n);
+      if (!sha) {
+        if (Date.now() - t0 > PUBLISH_BUDGET_MS) { waiting.push(n); return; }
+        const blob = mediaBlob_(n, mediaRows);
+        if (!blob) { missing.push(n); return; }
+        sha = gh_('post', '/git/blobs', { content: Utilities.base64Encode(blob.getBytes()), encoding: 'base64' }).sha;
+        cache.put('blob:' + n, sha, 6 * 3600);
+        sent++;
+      }
+      entries.push({ path: MEDIA_DIR + n, mode: '100644', type: 'blob', sha: sha });
+      added.push(n);
+    });
+    if (missing.length) throw new Error('These files are missing or empty: ' + missing.join(', ') + ' (' + whereUsed_(missing) + '). Upload them again, then publish.');
+    if (waiting.length) {
+      throw new Error('Sent ' + sent + ' file(s) before Google\'s time limit; ' + waiting.length + ' still to go. ' +
+        'Press Publish again to continue (files already sent are kept for a few hours).');
+    }
 
-  const user = currentUser_();
-  const steps = Object.keys(content.steps).reduce((n, k) => n + content.steps[k].length, 0);
-  const message = 'Publish guide content ' + content.version + '\n\n' +
-    content.operations.length + ' jobs, ' + content.models.length + ' models, ' + steps + ' steps; ' +
-    added.length + ' new media file(s), ' + removed.length + ' removed.\nPublished from the Field Guide Editor by ' + user + '.';
-  const newTree = gh_('post', '/git/trees', { base_tree: baseTree, tree: entries });
-  const commit = gh_('post', '/git/commits', { message: message, tree: newTree.sha, parents: [head] });
-  gh_('patch', '/git/refs/heads/' + BRANCH, { sha: commit.sha });
+    const canResend = n => { const r = mediaRows.find(x => x.Name === n); return !!(r && goodDriveFile_(r['Drive ID'])); };
+    const removed = Object.keys(inRepo).filter(p => p.indexOf(MEDIA_DIR) === 0 && used.indexOf(p.slice(MEDIA_DIR.length)) === -1 && canResend(p.slice(MEDIA_DIR.length)));
+    removed.forEach(p => entries.push({ path: p, mode: '100644', type: 'blob', sha: null }));
 
-  const usedSet = {};
-  used.forEach(n => { usedSet[n] = true; });
-  mediaRows.forEach(r => { r.Published = usedSet[r.Name] ? 'Yes' : 'No'; });
-  writeTable_('Media', mediaRows);
-  setSettings_({ last_publish: new Date().toISOString(), last_commit: commit.sha });
-  log_('Published', content.version, message.split('\n\n')[1].split('\n')[0] + ' · commit ' + commit.sha.slice(0, 7));
-  return {
-    version: content.version, commit: commit.sha, commitUrl: 'https://github.com/' + REPO + '/commit/' + commit.sha,
-    jobs: content.operations.length, steps: steps, added: added.length, removed: removed.length,
-  };
+    const json = JSON.stringify(content, null, 1) + '\n';
+    const cb = gh_('post', '/git/blobs', { content: json, encoding: 'utf-8' });
+    entries.push({ path: CONTENT_PATH, mode: '100644', type: 'blob', sha: cb.sha });
+
+    const user = currentUser_();
+    const steps = Object.keys(content.steps).reduce((n, k) => n + content.steps[k].length, 0);
+    const message = 'Publish guide content ' + content.version + '\n\n' +
+      content.operations.length + ' jobs, ' + content.models.length + ' models, ' + steps + ' steps; ' +
+      added.length + ' new media file(s), ' + removed.length + ' removed.\nPublished from the Field Guide Editor by ' + user + '.';
+    let newTree;
+    try {
+      newTree = gh_('post', '/git/trees', { base_tree: baseTree, tree: entries });
+    } catch (e) {
+      added.forEach(n => cache.remove('blob:' + n));   // a remembered file may be gone from GitHub: send it again next time
+      throw e;
+    }
+    const commit = gh_('post', '/git/commits', { message: message, tree: newTree.sha, parents: [head] });
+    gh_('patch', '/git/refs/heads/' + BRANCH, { sha: commit.sha });
+    added.forEach(n => cache.remove('blob:' + n));
+
+    // Published = the file is in the repo after this commit.
+    const after = {};
+    Object.keys(inRepo).forEach(p => { if (p.indexOf(MEDIA_DIR) === 0 && removed.indexOf(p) === -1 && filled[p]) after[p.slice(MEDIA_DIR.length)] = true; });
+    added.forEach(n => { after[n] = true; });
+    withLock_(() => {
+      const rows = readTable_('Media');
+      rows.forEach(r => { r.Published = after[r.Name] ? 'Yes' : 'No'; });
+      writeTable_('Media', rows);
+      setSettings_({ last_publish: new Date().toISOString(), last_commit: commit.sha });
+    });
+    log_('Published', content.version, message.split('\n\n')[1].split('\n')[0] + ' · commit ' + commit.sha.slice(0, 7));
+    return {
+      version: content.version, commit: commit.sha, commitUrl: 'https://github.com/' + REPO + '/commit/' + commit.sha,
+      jobs: content.operations.length, steps: steps, added: added.length, removed: removed.length,
+    };
+  } finally {
+    cache.remove('publishing');
+  }
 }
