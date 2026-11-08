@@ -6,7 +6,7 @@
  *    changes, so a saved file never goes stale). Videos support range requests for playback.
  * Cache names must match assets/app.js.
  */
-const SHELL = 'cft-shell-v1';
+const SHELL = 'cft-shell-v2';
 const CONTENT = 'cft-content-v1';
 const MEDIA = 'cft-media-v1';
 const SHELL_FILES = [
@@ -15,15 +15,25 @@ const SHELL_FILES = [
 ];
 const CONTENT_TIMEOUT_MS = 4000;
 
+// GitHub Pages tells browsers to keep files for 10 minutes; 'reload' / 'no-cache' skip that
+// browser copy so the phone always gets the newest app files from the site.
 self.addEventListener('install', ev => {
-  ev.waitUntil(caches.open(SHELL).then(c => c.addAll(SHELL_FILES)).then(() => self.skipWaiting()));
+  ev.waitUntil(caches.open(SHELL)
+    .then(c => c.addAll(SHELL_FILES.map(u => new Request(u, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', ev => {
   ev.waitUntil(caches.keys()
     .then(keys => Promise.all(keys.filter(k => /^cft-shell-/.test(k) && k !== SHELL).map(k => caches.delete(k))))
-    .then(() => self.clients.claim()));
+    .then(() => self.clients.claim())
+    .then(tellPagesUpdated));
 });
+
+/** Asks open pages to reload; they do it on the jobs or models screen, never in the middle of a guide. */
+async function tellPagesUpdated() {
+  (await self.clients.matchAll({ type: 'window' })).forEach(c => c.postMessage({ type: 'updated' }));
+}
 
 self.addEventListener('fetch', ev => {
   const req = ev.request;
@@ -37,12 +47,20 @@ self.addEventListener('fetch', ev => {
   ev.respondWith(shell(req, url.origin + path));
 });
 
-/** Saved app file at once; a fresh copy is fetched in the background for next time. */
+/**
+ * Saved app file at once; a fresh copy is fetched in the background. When the site has a newer
+ * version of the file, the pages are told to reload.
+ */
 async function shell(req, key) {
   const cache = await caches.open(SHELL);
   const hit = await cache.match(key);
-  const fresh = fetch(req.mode === 'navigate' ? key : req).then(res => {
-    if (res.ok) cache.put(key, res.clone()).catch(() => {});
+  const fresh = fetch(req.mode === 'navigate' ? key : req.url, { cache: 'no-cache' }).then(res => {
+    if (res.ok) {
+      cache.put(key, res.clone()).catch(() => {});
+      const was = hit && (hit.headers.get('etag') || hit.headers.get('last-modified'));
+      const now = res.headers.get('etag') || res.headers.get('last-modified');
+      if (was && now && was !== now) tellPagesUpdated();
+    }
     return res;
   });
   if (hit) { fresh.catch(() => {}); return hit; }

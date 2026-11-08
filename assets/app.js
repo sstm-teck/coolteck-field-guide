@@ -317,7 +317,19 @@
     userTap = false;
   }
 
+  let reloadWhenFree = false;
+  /** Reloads for a new site version only on the jobs or models screen, never in the middle of a guide. */
+  function reloadIfFree() {
+    if (!reloadWhenFree) return false;
+    const p = route().page;
+    if (p !== 'home' && p !== 'models') return false;
+    reloadWhenFree = false;
+    location.reload();
+    return true;
+  }
+
   function render() {
+    if (reloadIfFree()) return;
     stopSound();
     closeZoom();
     renderNote();
@@ -373,7 +385,15 @@
     $('#main').innerHTML = '<div class="empty">' + I.offline.replace('<svg', '<svg style="width:64px;height:64px;margin:0 auto 12px"') +
       'محتاج نت أول مرة بس<br><button class="wide-btn plain" data-act="retry" style="margin-top:20px">' + I.restart + 'جرّب تاني</button></div>';
   }
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { /* still works online */ });
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => { /* still works online */ });
+    // A newer version of the site arrived: reload on the jobs or models screen, not in a guide.
+    navigator.serviceWorker.addEventListener('message', e => {
+      if (!e.data || e.data.type !== 'updated') return;
+      reloadWhenFree = true;
+      reloadIfFree();
+    });
+  }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   start();
 })();
