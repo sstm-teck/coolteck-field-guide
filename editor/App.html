@@ -370,8 +370,7 @@
       '<div class="head-actions"><a class="btn" target="_blank" rel="noopener" href="' + esc(S.d.sheetUrl) + '">' + I.sheet + 'Google Sheet</a>' +
       (S.d.folderUrl ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(S.d.folderUrl) + '">' + I.image + 'Media folder</a>' : '') + '</div></div>' +
       '<div class="set-grid">' +
-      '<div class="card card-pad"><h3>Site</h3><div class="form">' + text('title', 'Title', true) + text('subtitle', 'Subtitle', true) + '</div>' +
-      '<div style="margin-top:14px"><span class="switch-line" data-act="sample"><span class="switch' + (/^y/i.test(s.sample) ? ' on' : '') + '"></span>Show the “sample content” bar</span></div></div>' +
+      '<div class="card card-pad"><h3>Site</h3><div class="form">' + text('title', 'Title', true) + text('subtitle', 'Subtitle', true) + '</div></div>' +
       '<div class="card card-pad"><h3>Editors</h3><div class="field"><label>Google accounts that can open this editor</label>' +
       '<textarea data-key="Settings:admins" data-setting="admins" rows="3" class="mono">' + esc(s.admins) + '</textarea><span class="hint">Comma separated. Saved when you click outside the box.</span></div></div>' +
       '<div class="card card-pad full"><h3>Spoken questions <small>the text and the voice on each choosing screen</small></h3><div class="steps">' +
@@ -436,7 +435,6 @@
       (!S.d.hasToken ? '<div class="note">' + I.warn + '<span>Set the GitHub token in Settings first.</span></div>' :
         '<p style="margin:0">' + plural(shown, 'job') + ' and ' + plural(n, 'step') + ' will be published' + (fresh ? ', with up to ' + plural(fresh, 'new file') : '') + '.</p>' +
         (empty ? '<div class="note">' + I.warn + '<span>' + plural(empty, 'step has', 'steps have') + ' no text and no picture.</span></div>' : '') +
-        (/^y/i.test(S.d.settings.sample) ? '<div class="note info">' + I.info + '<span>The “sample content” bar is on. Turn it off in Settings when the content is checked.</span></div>' : '') +
         '<div class="note info">' + I.info + '<span>The site updates about a minute after publishing. Phones get the new version the next time they open it with internet.</span></div>') +
       '</div><div class="modal-foot"><button class="btn" data-act="closeModal">Cancel</button>' +
       (S.d.hasToken ? '<button class="btn btn-primary" data-act="doPublish">' + I.publish + 'Publish now</button>' : '<button class="btn btn-primary" data-act="toSettings">Go to Settings</button>') + '</div></div>');
@@ -503,7 +501,6 @@
     pick: (d, ev, el) => { if (S.rec) { toast('Stop the recording first.', true); return; } pick(slotInfo(el)); },
     record: (d, ev, el) => toggleRecord(slotInfo(el)),
     unattach: (d, ev, el) => { const i = slotInfo(el); change('apiAttach', [i.table, i.id, i.field, null], KIND_LABEL[i.kind] + ' removed'); },
-    sample: () => change('apiSetSettings', [{ sample: /^y/i.test(S.d.settings.sample) ? 'No' : 'Yes' }]),
     publish: () => openPublish(),
     doPublish: (d, ev, el) => doPublish(el),
     toSettings: () => { closeModal(); go('settings'); },

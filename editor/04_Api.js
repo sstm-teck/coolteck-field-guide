@@ -269,7 +269,6 @@ function apiSetSettings(values) {
       if (!def || INTERNAL_SETTINGS.indexOf(k) !== -1 || /_sound$/.test(k)) return;
       clean[k] = String(values[k] === null || values[k] === undefined ? '' : values[k]).trim();
     });
-    if (clean.sample !== undefined) clean.sample = /^y/i.test(clean.sample) ? 'Yes' : 'No';
     if (clean.admins !== undefined) {
       const list = clean.admins.toLowerCase().split(/[\s,;]+/).filter(Boolean);
       const bad = list.filter(e => !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e));

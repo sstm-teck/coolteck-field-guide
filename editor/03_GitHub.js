@@ -46,7 +46,6 @@ function buildContent_() {
   const steps = readTable_('Steps');
   const out = {
     version: Utilities.formatDate(new Date(), 'Africa/Cairo', 'yyyy-MM-dd.HHmmss'),
-    sample: /^y/i.test(s.sample),
     app: {
       title: s.title, subtitle: s.subtitle,
       prompts: {

@@ -164,7 +164,6 @@ function seedFromSite_() {
     ask_job: val(p.operation, 'text'), ask_job_sound: file(val(p.operation, 'audio')),
     ask_model: val(p.model, 'text'), ask_model_sound: file(val(p.model, 'audio')),
     ask_done: val(p.done, 'text'), ask_done_sound: file(val(p.done, 'audio')),
-    sample: c.sample ? 'Yes' : 'No',
     last_publish: new Date().toISOString(), last_edit: new Date().toISOString(),
   });
   writeTable_('Media', Object.keys(media).map(n => ({

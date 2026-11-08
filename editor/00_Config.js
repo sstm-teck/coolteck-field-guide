@@ -65,7 +65,6 @@ const SETTINGS = [
   ['ask_model_sound', '', 'Sound for that question'],
   ['ask_done', 'خلصت! الجهاز اشتغل؟', 'Question on the last screen'],
   ['ask_done_sound', '', 'Sound for that question'],
-  ['sample', 'Yes', 'Yes = show the "sample content" bar on the site'],
   ['admins', FIRST_ADMINS, 'Google accounts that can open this editor, comma separated'],
   ['last_edit', '', 'Set by the app'],
   ['last_publish', '', 'Set by the app'],

@@ -191,7 +191,6 @@
   function renderNote() {
     const notes = [];
     if (!navigator.onLine) notes.push(I.offline + '<span>مفيش نت · شغّال من اللي متحفظ</span>');
-    if (C && C.sample) notes.push(I.info + '<span>محتوى تجريبي · لسه بيتراجع</span>');
     const bar = $('#noteBar');
     bar.innerHTML = notes.join('<span style="flex:1"></span>');
     bar.hidden = !notes.length;
@@ -203,7 +202,7 @@
       '<div class="label">' + esc(label) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div></a>';
   }
   function grid(cards) {
-    return '<div class="grid' + (cards.length > 4 ? ' three' : '') + '">' + cards.join('') + '</div>';
+    return '<div class="grid">' + cards.join('') + '</div>';
   }
   function prompt(key) {
     const p = (C.app && C.app.prompts && C.app.prompts[key]) || {};
