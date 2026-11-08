@@ -62,7 +62,7 @@ function apiLoad() {
 function apiMediaData(name) {
   requireStaff_();
   const blob = mediaBlob_(String(name));
-  if (!blob) throw new Error('File ' + name + ' is not in the Drive folder.');
+  if (!blob) throw new Error('File ' + name + ' is missing or empty in the Drive folder. Upload it again.');
   return { name: name, mime: blob.getContentType(), data: Utilities.base64Encode(blob.getBytes()) };
 }
 
@@ -138,8 +138,22 @@ function apiSet(table, id, fields) {
 }
 
 /**
+ * Uploads in pieces (see 02_Media.js): apiUploadStart, then apiUploadChunk for each piece, then
+ * apiAttach with the returned name.
+ */
+function apiUploadStart(info) {
+  requireStaff_();
+  return uploadStart_(info || {});
+}
+
+function apiUploadChunk(id, offset, data) {
+  requireStaff_();
+  return uploadChunk_(String(id), offset, data);
+}
+
+/**
  * Puts an uploaded file into a media field: (Jobs|Models|Steps, id, field) or (Settings, key).
- * upload = {mime, data (base64), name}. upload null clears the field.
+ * upload = {name} of a file already uploaded; null clears the field.
  */
 function apiAttach(table, id, field, upload) {
   requireStaff_();
@@ -152,7 +166,13 @@ function apiAttach(table, id, field, upload) {
     if (!kind) throw new Error(field + ' does not take a file.');
   }
   return withLock_(() => {
-    const name = upload ? saveMedia_(upload, kind) : '';
+    let name = '';
+    if (upload) {
+      name = String(upload.name || '');
+      const m = readTable_('Media').find(r => r.Name === name);
+      if (!m || !goodDriveFile_(m['Drive ID'])) throw new Error('The upload did not finish. Try again.');
+      if (m.Type !== kind) throw new Error('This place takes a ' + kind + ', not a ' + m.Type + '.');
+    }
     if (table === 'Settings') {
       setSettings_({ [id]: name });
     } else {

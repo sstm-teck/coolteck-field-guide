@@ -81,6 +81,17 @@ function usedMedia_(content) {
   return Object.keys(out);
 }
 
+/** Where the given media names are used, for error messages (e.g. "Settings › ask_job_sound"). */
+function whereUsed_(names) {
+  const out = [];
+  const s = settings_();
+  Object.keys(s).forEach(k => { if (names.indexOf(s[k]) !== -1) out.push('Settings › ' + k); });
+  readTable_('Jobs').forEach(j => ['Picture', 'Sound'].forEach(f => { if (names.indexOf(j[f]) !== -1) out.push('Job ' + j.ID + ' › ' + f); }));
+  readTable_('Models').forEach(m => ['Picture', 'Sound'].forEach(f => { if (names.indexOf(m[f]) !== -1) out.push('Model ' + m.ID + ' › ' + f); }));
+  readTable_('Steps').forEach(x => ['Picture', 'Video', 'Sound'].forEach(f => { if (names.indexOf(x[f]) !== -1) out.push('Step ' + x.Job + ' #' + x.Order + ' › ' + f); }));
+  return out.join(', ') || 'not found';
+}
+
 function publish_() {
   if (!token_()) throw new Error('Set the GitHub token on the Settings page first.');
   const content = buildContent_();
@@ -91,20 +102,21 @@ function publish_() {
   const tree = gh_('get', '/git/trees/' + baseTree + '?recursive=1');
   if (tree.truncated) throw new Error('The repository is too big to read in one go.');
   const inRepo = {};
-  tree.tree.forEach(t => { if (t.type === 'blob') inRepo[t.path] = t.sha; });
+  const filled = {};   // files with content; an empty file in the repo is sent again from Drive
+  tree.tree.forEach(t => { if (t.type === 'blob') { inRepo[t.path] = t.sha; if (t.size > 0) filled[t.path] = true; } });
 
   const mediaRows = readTable_('Media');
   const entries = [];
   const added = [], missing = [];
   used.forEach(n => {
-    if (inRepo[MEDIA_DIR + n]) return;
+    if (filled[MEDIA_DIR + n]) return;
     const blob = mediaBlob_(n, mediaRows);
     if (!blob) { missing.push(n); return; }
     const b = gh_('post', '/git/blobs', { content: Utilities.base64Encode(blob.getBytes()), encoding: 'base64' });
     entries.push({ path: MEDIA_DIR + n, mode: '100644', type: 'blob', sha: b.sha });
     added.push(n);
   });
-  if (missing.length) throw new Error('These files are missing from the Drive folder and the site: ' + missing.join(', ') + '. Upload them again.');
+  if (missing.length) throw new Error('These files are missing or empty: ' + missing.join(', ') + ' (' + whereUsed_(missing) + '). Upload them again, then publish.');
 
   const removed = Object.keys(inRepo).filter(p => p.indexOf(MEDIA_DIR) === 0 && used.indexOf(p.slice(MEDIA_DIR.length)) === -1);
   removed.forEach(p => entries.push({ path: p, mode: '100644', type: 'blob', sha: null }));

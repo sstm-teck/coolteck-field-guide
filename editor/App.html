@@ -27,7 +27,7 @@
   };
 
   // ---------------------------------------------------------------- state
-  const S = { d: null, page: 'jobs', arg: null, blobs: {}, loading: {}, rec: null, modal: null, publishing: false };
+  const S = { d: null, page: 'jobs', arg: null, blobs: {}, loading: {}, uploads: {}, rec: null, modal: null, publishing: false };
 
   const $ = sel => document.querySelector(sel);
   const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -108,7 +108,7 @@
       call('apiMediaData', name).then(r => {
         const bin = atob(r.data), bytes = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        S.blobs[name] = URL.createObjectURL(new Blob([bytes], { type: r.mime }));
+        if (!S.blobs[name]) S.blobs[name] = URL.createObjectURL(new Blob([bytes], { type: r.mime }));
         renderKeepingFocus();
       }, () => { /* preview only */ });
     }
@@ -119,20 +119,30 @@
 
   /** A media box: preview + Upload (+ Record for sounds) + Remove. */
   function slot(table, id, field, kind, value, big) {
-    const src = mediaSrc(value);
+    const up = S.uploads[slotKey({ table: table, id: id, field: field })];
+    const src = up ? '' : mediaSrc(value);
     const recHere = S.rec && S.rec.table === table && S.rec.id === id && S.rec.field === field;
     let view;
-    if (!value) view = '<span class="empty-ico">' + KIND_ICON[kind] + '</span>';
+    if (up) view = progressHtml(up);
+    else if (!value) view = '<span class="empty-ico">' + KIND_ICON[kind] + '</span>';
     else if (!src) view = '<span class="muted" style="font-size:12px">Loading preview…</span>';
     else if (kind === 'image') view = '<img src="' + esc(src) + '" alt="">';
     else if (kind === 'video') view = '<video src="' + esc(src) + '" controls muted playsinline preload="metadata"></video>';
     else view = '<audio src="' + esc(src) + '" controls preload="none"></audio>';
-    return '<div class="slot' + (value ? ' filled' : '') + (big ? ' big' : '') + '" data-table="' + esc(table) + '" data-id="' + esc(id) + '" data-field="' + esc(field) + '" data-kind="' + kind + '">' +
+    return '<div class="slot' + (value ? ' filled' : '') + (big ? ' big' : '') + (up ? ' uploading' : '') + '" data-table="' + esc(table) + '" data-id="' + esc(id) + '" data-field="' + esc(field) + '" data-kind="' + kind + '">' +
       '<div class="s-label"><span>' + KIND_LABEL[kind] + '</span>' + (value ? '<span class="mono" title="' + esc(value) + '">' + esc(value.slice(0, 6)) + '…</span>' : '') + '</div>' +
       '<div class="s-view">' + view + '</div>' +
       '<div class="s-act"><button class="btn btn-sm" data-act="pick">' + I.upload + (value ? 'Change' : 'Upload') + '</button>' +
       (kind === 'audio' ? '<button class="btn btn-sm' + (recHere ? ' rec-on' : '') + '" data-act="record">' + I.mic + (recHere ? 'Recording…' : 'Record') + '</button>' : '') +
       (value ? '<button class="btn btn-sm btn-ghost" data-act="unattach" title="Remove">' + I.trash + '</button>' : '') + '</div></div>';
+  }
+  const slotKey = i => i.table + '|' + i.id + '|' + i.field;
+  const progressHtml = u => '<div class="up-prog"><div class="up-bar"><span style="width:' + u.pct + '%"></span></div><div class="up-txt">' + esc(u.label) + (u.pct ? ' · ' + u.pct + '%' : '') + '</div></div>';
+  /** Updates only the progress part of a slot (cheap, keeps the rest of the page as it is). */
+  function showProgress(info) {
+    const u = S.uploads[slotKey(info)];
+    const el = document.querySelector('.slot[data-table="' + info.table + '"][data-id="' + CSS.escape(info.id) + '"][data-field="' + info.field + '"] .s-view');
+    if (el && u) el.innerHTML = progressHtml(u);
   }
   const slotInfo = el => { const s = el.closest('.slot'); return { el: s, table: s.dataset.table, id: s.dataset.id, field: s.dataset.field, kind: s.dataset.kind }; };
 
@@ -169,23 +179,45 @@
     if (!out || out.type !== 'image/webp') out = await as('image/jpeg', 0.78);
     return out.size < file.size ? out : file;
   }
+  const CHUNK = 1024 * 1024;   // same as UPLOAD_CHUNK in 02_Media.js
+  /**
+   * Uploads in 1 MB pieces so the box can show real progress: the server passes each piece to Drive,
+   * then the finished file is put into the field. The file's name is its SHA-256 fingerprint.
+   */
   async function attach(info, file) {
     const type = String(file.type || '').split(';')[0];
     if (type.split('/')[0] !== info.kind) { toast('This place takes a ' + KIND_LABEL[info.kind].toLowerCase() + '.', true); return; }
     if (info.kind === 'audio' && AUDIO_OK.indexOf(type) === -1) { toast('This sound format (' + type + ') does not play on phones. Use MP3 or M4A, or record here.', true); return; }
-    let blob = file;
+    const key = slotKey(info);
+    if (S.uploads[key]) return;
+    S.uploads[key] = { pct: 0, label: info.kind === 'image' ? 'Making the photo smaller' : 'Preparing' };
+    renderKeepingFocus();
     try {
-      if (info.kind === 'image') blob = await shrinkImage(file);
-    } catch (e) { blob = file; }
-    if (blob.size > MAX[info.kind] * 1024 * 1024) { toast('Too big: ' + (blob.size / 1048576).toFixed(1) + ' MB. The limit for a ' + KIND_LABEL[info.kind].toLowerCase() + ' is ' + MAX[info.kind] + ' MB.', true); return; }
-    if (info.kind === 'video' && blob.size > 8 * 1024 * 1024) toast('Big video (' + (blob.size / 1048576).toFixed(1) + ' MB): technicians on weak internet will wait. Shorter clips are better.');
-    if (info.el) info.el.classList.add('busy');
-    const data = await toBase64(blob);
-    const ok = await change('apiAttach', [info.table, info.id, info.field, { mime: blob.type || type, data: data, name: file.name || 'recording' }],
-      KIND_LABEL[info.kind] + ' saved');
-    if (ok) {
-      const name = fieldValue(info);
-      if (name && !S.blobs[name]) { S.blobs[name] = URL.createObjectURL(blob); renderKeepingFocus(); }
+      let blob = file;
+      try { if (info.kind === 'image') blob = await shrinkImage(file); } catch (e) { blob = file; }
+      if (blob.size > MAX[info.kind] * 1024 * 1024) throw new Error('Too big: ' + (blob.size / 1048576).toFixed(1) + ' MB. The limit for a ' + KIND_LABEL[info.kind].toLowerCase() + ' is ' + MAX[info.kind] + ' MB.');
+      if (info.kind === 'video' && blob.size > 8 * 1024 * 1024) toast('Big video (' + (blob.size / 1048576).toFixed(1) + ' MB): technicians on weak internet will wait. Shorter clips are better.');
+      const buf = await blob.arrayBuffer();
+      const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', buf))).slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('');
+      const mime = String(blob.type || type).split(';')[0];
+      const start = await call('apiUploadStart', { hash: hash, mime: mime, size: buf.byteLength, kind: info.kind, name: file.name || 'recording' });
+      if (!start.done) {
+        for (let off = 0; off < buf.byteLength; off += start.chunk || CHUNK) {
+          const end = Math.min(buf.byteLength, off + (start.chunk || CHUNK));
+          S.uploads[key] = { pct: Math.max(1, Math.round(off / buf.byteLength * 100)), label: 'Uploading' };
+          showProgress(info);
+          await call('apiUploadChunk', start.id, off, await toBase64(new Blob([buf.slice(off, end)])));
+        }
+      }
+      S.uploads[key] = { pct: 100, label: 'Saving' };
+      showProgress(info);
+      S.blobs[start.name] = URL.createObjectURL(new Blob([buf], { type: mime }));
+      await change('apiAttach', [info.table, info.id, info.field, { name: start.name }], KIND_LABEL[info.kind] + ' saved');
+    } catch (e) {
+      toast(errText(e), true);
+    } finally {
+      delete S.uploads[key];
+      renderKeepingFocus();
     }
   }
   function fieldValue(info) {
@@ -536,7 +568,7 @@
   });
   $('#modal').addEventListener('mousedown', ev => { if (ev.target === $('#modal')) closeModal(); });
   document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && S.modal) closeModal(); });
-  window.addEventListener('beforeunload', ev => { if (busy || S.publishing) { ev.preventDefault(); ev.returnValue = ''; } });
+  window.addEventListener('beforeunload', ev => { if (busy || S.publishing || Object.keys(S.uploads).length) { ev.preventDefault(); ev.returnValue = ''; } });
 
   // ---------------------------------------------------------------- start
   const bar = document.createElement('div');

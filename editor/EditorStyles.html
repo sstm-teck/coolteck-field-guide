@@ -44,7 +44,11 @@
 .slot .s-act { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; border-top: 1px solid var(--line-2); }
 .slot .s-act .btn { flex: 1; justify-content: center; }
 .slot.filled { border-style: solid; border-color: var(--line); background: #fff; }
-.slot.busy { opacity: .6; pointer-events: none; }
+.slot.uploading .s-act { opacity: .5; pointer-events: none; }
+.up-prog { width: 100%; padding: 0 8px; display: grid; gap: 6px; }
+.up-bar { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.up-bar span { display: block; height: 100%; background: var(--brand-2); border-radius: 999px; transition: width .3s; }
+.up-txt { font-size: 12px; font-weight: 600; color: var(--ink-2); text-align: center; }
 .slot.big .s-view { min-height: 170px; }
 .slot.big .s-view img { max-height: 200px; }
 .rec-on { background: var(--red) !important; border-color: var(--red) !important; color: #fff !important; animation: blink 1s infinite; }
