@@ -1,12 +1,12 @@
 {
- "version": "2026-11-08.033956",
+ "version": "2026-11-08.034442",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
   "prompts": {
    "operation": {
     "text": "هتعمل إيه؟",
-    "audio": "media/0d2bb321c4ef27a1.weba"
+    "audio": ""
    },
    "model": {
     "text": "أنهي جهاز؟",
@@ -218,7 +218,7 @@
     "warning": true,
     "text": "افصل الكهربا عن الجهاز الأول",
     "image": "media/step-placeholder.svg",
-    "video": "media/eef07a345a7ce21b.mp4",
+    "video": "",
     "audio": ""
    },
    {
@@ -227,7 +227,7 @@
     "warning": false,
     "text": "افتح غطا العلبة",
     "image": "media/step-placeholder.svg",
-    "video": "media/65b0a38a21c0b2e4.mp4",
+    "video": "",
     "audio": ""
    },
    {
