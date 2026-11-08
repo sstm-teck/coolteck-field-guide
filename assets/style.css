@@ -132,8 +132,8 @@ svg { display: block; }
 .loading-media.failed { background: var(--amber-soft); color: var(--amber); }
 .loading-media.failed > svg { width: 48px; height: 48px; }
 .loading-media .wide-btn { width: auto; padding: 0 22px; height: 60px; font-size: 20px; margin: 0; }
-.speak.loading { background: var(--muted); }
-.speak.loading svg { animation: pulse 1s infinite; opacity: .6; }
+.speak.fetching { background: var(--muted); }
+.speak.fetching svg { animation: pulse 1s infinite; opacity: .6; }
 .media .unmute {
   position: absolute; inset: 0; margin: auto; width: 96px; height: 96px; border-radius: 50%;
   display: grid; place-items: center; background: rgba(21, 128, 61, .92); color: #fff; box-shadow: var(--shadow);

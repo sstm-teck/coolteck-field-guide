@@ -176,18 +176,18 @@
   let playingBtn = null;
   function stopSound() {
     player.pause();
-    document.querySelectorAll('.speak.loading').forEach(b => b.classList.remove('loading'));
+    document.querySelectorAll('.speak.fetching').forEach(b => b.classList.remove('fetching'));
     if (playingBtn) { playingBtn.classList.remove('playing'); playingBtn.innerHTML = I.speaker; playingBtn = null; }
   }
   function playSound(src, btn) {
     stopSound();
     if (!src) return;
     player.src = src;
-    if (btn) btn.classList.add('loading');
+    if (btn) btn.classList.add('fetching');
     player.play().then(() => {
       playingBtn = btn || null;
-      if (btn) { btn.classList.remove('loading'); btn.classList.add('playing'); btn.innerHTML = I.stop; }
-    }, () => { if (btn) btn.classList.remove('loading'); /* blocked until the worker taps; the speaker button still works */ });
+      if (btn) { btn.classList.remove('fetching'); btn.classList.add('playing'); btn.innerHTML = I.stop; }
+    }, () => { if (btn) btn.classList.remove('fetching'); /* blocked until the worker taps; the speaker button still works */ });
   }
   player.addEventListener('ended', stopSound);
   const speakBtn = src => src ? '<button class="speak" data-act="speak" data-src="' + esc(src) + '" aria-label="اسمع">' + I.speaker + '</button>' : '';
