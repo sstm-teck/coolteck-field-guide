@@ -1,5 +1,5 @@
 {
- "version": "2026-11-08.035452",
+ "version": "2026-11-08.040912",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -23,7 +23,7 @@
    "id": "replace-device",
    "title": "تغيير الجهاز",
    "image": "media/op-replace-device.svg",
-   "audio": "media/e39866a1ff4f276e.weba",
+   "audio": "",
    "models": [
     "wrover",
     "xiao-c3",
@@ -56,7 +56,7 @@
    "id": "wrover",
    "title": "النسخة رقم 1 - WROVER",
    "image": "media/model-wrover.svg",
-   "audio": "media/1a586fea27ee1496.weba"
+   "audio": ""
   },
   {
    "id": "xiao-c3",
