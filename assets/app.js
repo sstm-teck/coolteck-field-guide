@@ -256,7 +256,8 @@
     renderTop(o.title, m.title);
 
     const media = s.video
-      ? '<video src="' + esc(s.video) + '"' + (s.image ? ' poster="' + esc(s.image) + '"' : '') + ' autoplay muted loop playsinline preload="auto" data-act="video"></video>'
+      ? '<video src="' + esc(s.video) + '"' + (s.image ? ' poster="' + esc(s.image) + '"' : '') + ' muted playsinline preload="auto"' + (s.audio ? ' loop' : '') + ' data-act="video"></video>' +
+        (s.audio ? '' : '<button class="unmute" data-act="unmute" aria-label="شغّل الصوت" hidden>' + I.speaker + '</button>')
       : s.image ? '<img src="' + esc(s.image) + '" alt="" data-act="zoom"><span class="zoom-hint" aria-hidden="true">' + I.zoom + '</span>' : '';
     $('#main').innerHTML =
       '<div class="step-head"><div class="step-no">' + num(n) + '</div><div class="step-of"><div class="of">خطوة ' + num(n) + ' من ' + num(total) + '</div>' +
@@ -272,8 +273,25 @@
       (last ? '<a class="nav-btn next finish" href="' + link(o.id, m.id, 'done') + '" data-tap="1">' + I.check + 'خلصت</a>'
         : '<a class="nav-btn next" href="' + link(o.id, m.id, n + 1) + '" data-tap="1">التالي' + I.next + '</a>'));
 
+    const tapped = userTap;
     autoSpeak(s.audio);
+    if (s.video) startVideo(!s.audio && tapped);
     saveGuide(steps);
+  }
+
+  /**
+   * Step video. With the step's own recorded voice it stays a silent loop (no two sounds at once).
+   * Without one, it plays once with its sound; if the phone only allows silent play, a speaker
+   * button on the video turns the sound on.
+   */
+  function startVideo(withSound) {
+    const v = document.querySelector('.media video');
+    if (!v) return;
+    const unmute = document.querySelector('.media .unmute');
+    const silent = () => { v.muted = true; v.play().catch(() => {}); if (unmute) unmute.hidden = false; };
+    if (!withSound) { silent(); return; }
+    v.muted = false;
+    v.play().then(() => { if (unmute) unmute.hidden = true; }, silent);
   }
 
   /** Saves the whole guide (this job + model) on the phone and shows its state under the step. */
@@ -360,7 +378,19 @@
     if (act === 'speak') { if (playingBtn === el) stopSound(); else playSound(el.dataset.src, el); return; }
     if (act === 'zoom') { openZoom(el.getAttribute('src')); return; }
     if (act === 'unzoom') { closeZoom(); return; }
-    if (act === 'video') { if (el.paused) el.play(); else el.pause(); return; }
+    if (act === 'video') {
+      const unmute = document.querySelector('.media .unmute');
+      if (unmute && el.muted) { el.muted = false; unmute.hidden = true; el.currentTime = 0; el.play().catch(() => {}); return; }
+      if (el.ended) { el.currentTime = 0; el.play().catch(() => {}); return; }
+      if (el.paused) el.play().catch(() => {}); else el.pause();
+      return;
+    }
+    if (act === 'unmute') {
+      const v = document.querySelector('.media video');
+      if (v) { v.muted = false; v.currentTime = 0; v.play().catch(() => {}); }
+      el.hidden = true;
+      return;
+    }
     if (act === 'problem') { renderDone(route(), true); return; }
     if (act === 'retry') { start(); }
   });

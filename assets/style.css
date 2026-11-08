@@ -118,6 +118,12 @@ svg { display: block; }
   background: rgba(15, 23, 42, .55); color: #fff;
 }
 .media .zoom-hint svg { width: 24px; height: 24px; }
+.media .unmute {
+  position: absolute; inset: 0; margin: auto; width: 96px; height: 96px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(21, 128, 61, .92); color: #fff; box-shadow: var(--shadow);
+  animation: pulse 1.2s infinite;
+}
+.media .unmute svg { width: 48px; height: 48px; }
 
 .say {
   display: flex; align-items: center; gap: 14px; margin-top: 14px;
