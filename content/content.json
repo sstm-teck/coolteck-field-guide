@@ -1,5 +1,5 @@
 {
- "version": "2026-11-08.035252",
+ "version": "2026-11-08.035334",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -23,7 +23,7 @@
    "id": "replace-device",
    "title": "تغيير الجهاز",
    "image": "media/op-replace-device.svg",
-   "audio": "media/21ad19d3a992c81f.weba",
+   "audio": "",
    "models": [
     "wrover",
     "xiao-c3",
