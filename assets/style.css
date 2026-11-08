@@ -86,7 +86,11 @@ svg { display: block; }
   background: var(--card); border-radius: var(--radius); overflow: hidden;
   box-shadow: var(--shadow); border: 3px solid transparent;
 }
-.card:active { transform: scale(.97); border-color: var(--brand-2); }
+.card { position: relative; }
+.card-link { display: flex; flex-direction: column; flex: 1; }
+.card:has(.card-link:active) { transform: scale(.97); border-color: var(--brand-2); }
+.card-speak { position: absolute; top: 10px; inset-inline-start: 10px; width: 58px; height: 58px; z-index: 2; }
+.card-speak svg { width: 30px; height: 30px; }
 .card .pic { aspect-ratio: 4 / 3; background: var(--brand-soft); }
 .card .pic { position: relative; }
 .card .pic:not(.ok)::after { content: ""; position: absolute; inset: 0; margin: auto; width: 34px; height: 34px; border-radius: 50%; border: 4px solid rgba(33, 68, 154, .15); border-top-color: var(--brand); animation: spin .8s linear infinite; }

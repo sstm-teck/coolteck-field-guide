@@ -226,9 +226,12 @@
   }
 
   // ---------------------------------------------------------------- screens
-  function card(href, img, label, sub) {
-    return '<a class="card" href="' + href + '" data-tap="1"><div class="pic">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" onload="this.parentNode.classList.add(\'ok\')" onerror="this.parentNode.classList.add(\'ok\')">' : '') + '</div>' +
-      '<div class="label">' + esc(label) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div></a>';
+  /** A picture card; a card with a sound gets a speaker button that reads its name (without opening it). */
+  function card(href, img, label, audio) {
+    return '<div class="card"><a class="card-link" href="' + href + '" data-tap="1"><div class="pic">' +
+      (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" onload="this.parentNode.classList.add(\'ok\')" onerror="this.parentNode.classList.add(\'ok\')">' : '') + '</div>' +
+      '<div class="label">' + esc(label) + '</div></a>' +
+      (audio ? '<button class="speak card-speak" data-act="speak" data-src="' + esc(audio) + '" aria-label="اسمع">' + I.speaker + '</button>' : '') + '</div>';
   }
   function grid(cards) {
     return '<div class="grid">' + cards.join('') + '</div>';
@@ -254,7 +257,7 @@
     showNav('');
     const ops = (C.operations || []).filter(o => modelsFor(o).length && (C.steps || {})[o.id]);
     $('#main').innerHTML = ask('operation', 'هتعمل إيه؟') +
-      (ops.length ? grid(ops.map(o => card(opLink(o), o.image, o.title))) : '<div class="empty">لسه مفيش شغلانات</div>');
+      (ops.length ? grid(ops.map(o => card(opLink(o), o.image, o.title, o.audio))) : '<div class="empty">لسه مفيش شغلانات</div>');
     autoSpeak(prompt('operation').audio);
   }
   /** A job with one model goes straight to its steps. */
@@ -270,7 +273,7 @@
     if (ms.length === 1) return replace(link(o.id, ms[0].id, 1));
     renderTop(o.title);
     showNav('<a class="nav-btn" href="#/" data-tap="1">' + I.prev + 'رجوع</a>');
-    $('#main').innerHTML = ask('model', 'أنهي جهاز؟') + grid(ms.map(m => card(link(o.id, m.id, 1), m.image, m.title)));
+    $('#main').innerHTML = ask('model', 'أنهي جهاز؟') + grid(ms.map(m => card(link(o.id, m.id, 1), m.image, m.title, m.audio)));
     autoSpeak(prompt('model').audio);
   }
 
