@@ -1,5 +1,5 @@
 {
- "version": "2026-11-08.033812",
+ "version": "2026-11-08.033956",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -228,7 +228,7 @@
     "text": "افتح غطا العلبة",
     "image": "media/step-placeholder.svg",
     "video": "media/65b0a38a21c0b2e4.mp4",
-    "audio": "media/e0cb77a8f61e2178.weba"
+    "audio": ""
    },
    {
     "id": "s-4da951e5",
