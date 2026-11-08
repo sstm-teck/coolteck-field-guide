@@ -1,5 +1,5 @@
 {
- "version": "2026-11-08.031452",
+ "version": "2026-11-08.032511",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -218,7 +218,7 @@
     "warning": true,
     "text": "افصل الكهربا عن الجهاز الأول",
     "image": "media/step-placeholder.svg",
-    "video": "",
+    "video": "media/65b0a38a21c0b2e4.mp4",
     "audio": ""
    },
    {
