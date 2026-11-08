@@ -1,5 +1,5 @@
 {
- "version": "2026-11-08.023325",
+ "version": "2026-11-08.023444",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -27,7 +27,6 @@
    "models": [
     "wrover",
     "xiao-c3",
-    "xiao-s3",
     "xiao-s3-plus"
    ]
   },
@@ -39,7 +38,6 @@
    "models": [
     "wrover",
     "xiao-c3",
-    "xiao-s3",
     "xiao-s3-plus"
    ]
   },
@@ -56,25 +54,19 @@
  "models": [
   {
    "id": "wrover",
-   "title": "WROVER",
+   "title": "النسخة رقم 1 - WROVER",
    "image": "media/model-wrover.svg",
    "audio": ""
   },
   {
    "id": "xiao-c3",
-   "title": "XIAO C3",
+   "title": "النسخة رقم 2 - XIAO C3/S3",
    "image": "media/model-xiao-c3.svg",
    "audio": ""
   },
   {
-   "id": "xiao-s3",
-   "title": "XIAO S3",
-   "image": "media/model-xiao-s3.svg",
-   "audio": ""
-  },
-  {
    "id": "xiao-s3-plus",
-   "title": "XIAO S3 Plus",
+   "title": "النسخة رقم 3 - XIAO S3 Plus",
    "image": "media/model-xiao-s3-plus.svg",
    "audio": ""
   }
