@@ -20,8 +20,6 @@ const MEDIA_FOLDER_NAME = 'CoolTeck Field Guide · media';
 // The "CoolTeck Field Guide Editor" Google Sheet this script is bound to.
 const SPREADSHEET_ID = '1aO9VGcDerjaIThAG0FINVtbhLRgP_zCa-ovUXsN6D9A';
 
-// The owner of the script can always open the editor; others are listed in Settings › admins.
-const FIRST_ADMINS = 'salah.hassan@sstm-eg.com';
 
 // ---------- sheets ----------
 // Jobs and models are identified by a short English link name (it appears in the step links,
@@ -65,7 +63,6 @@ const SETTINGS = [
   ['ask_model_sound', '', 'Sound for that question'],
   ['ask_done', 'خلصت! الجهاز اشتغل؟', 'Question on the last screen'],
   ['ask_done_sound', '', 'Sound for that question'],
-  ['admins', FIRST_ADMINS, 'Google accounts that can open this editor, comma separated'],
   ['last_edit', '', 'Set by the app'],
   ['last_publish', '', 'Set by the app'],
   ['last_commit', '', 'Set by the app'],

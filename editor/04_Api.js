@@ -1,21 +1,10 @@
 /**
  * Web app entry point and the API the page calls through google.script.run.
- * Every call checks the admin list, and every change returns the whole (small) dataset so the page
- * always shows what the sheet holds.
+ * Every sstm-eg.com account can use it (the deployment is open to the domain only), and every change
+ * returns the whole (small) dataset so the page always shows what the sheet holds.
  */
 
 function doGet() {
-  const user = currentUser_();
-  if (!isAdmin_(user)) {
-    log_('Denied', user || 'unknown account', 'Tried to open the editor');
-    return HtmlService.createHtmlOutput(
-      '<div style="font-family:Arial,sans-serif;max-width:460px;margin:15vh auto;padding:32px;border:1px solid #E5E9F2;border-radius:16px;text-align:center;color:#0F172A">' +
-      '<img src="' + BRAND.logoFull + '" alt="SSTM" style="width:200px;margin-bottom:16px">' +
-      '<h2 style="margin:0 0 8px;color:#21449A">Access denied</h2>' +
-      '<p style="color:#64748B;margin:0">' + (user ? 'The account <b>' + user.replace(/[<>&"]/g, '') + '</b> is' : 'Your account is') +
-      ' not an editor of the CoolTeck Field Guide. Ask an admin to add it in Settings.</p></div>')
-      .setTitle('SSTM · Access denied');
-  }
   return HtmlService.createTemplateFromFile('Index').evaluate()
     .setTitle('SSTM · ' + APP_NAME)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
@@ -32,16 +21,11 @@ function currentUser_() {
   return String(Session.getActiveUser().getEmail() || '').trim().toLowerCase();
 }
 
-function isAdmin_(email) {
-  if (!email) return false;
-  if (email === String(Session.getEffectiveUser().getEmail() || '').toLowerCase()) return true;
-  const list = String(settings_().admins || FIRST_ADMINS).toLowerCase().split(/[\s,;]+/).filter(Boolean);
-  return list.indexOf(email) !== -1;
-}
-
-function requireAdmin_() {
+/** Any signed-in sstm-eg.com account. Google already limits the web app to the domain; this also
+ *  covers the page's server functions. */
+function requireStaff_() {
   const user = currentUser_();
-  if (!isAdmin_(user)) throw new Error('Access denied for ' + (user || 'an unidentified account') + '.');
+  if (!/@sstm-eg\.com$/.test(user)) throw new Error('Sign in with your sstm-eg.com account.');
   return user;
 }
 
@@ -69,14 +53,14 @@ function payload_() {
 }
 
 function apiLoad() {
-  requireAdmin_();
+  requireStaff_();
   seedFromSite_();
   return payload_();
 }
 
 /** The bytes of one media file (for previews of files not on the site yet). */
 function apiMediaData(name) {
-  requireAdmin_();
+  requireStaff_();
   const blob = mediaBlob_(String(name));
   if (!blob) throw new Error('File ' + name + ' is not in the Drive folder.');
   return { name: name, mime: blob.getContentType(), data: Utilities.base64Encode(blob.getBytes()) };
@@ -90,7 +74,7 @@ const splitIds_ = v => String(v || '').split(',').map(x => x.trim()).filter(Bool
 
 /** Adds a job ({ID, Title}), a model ({ID, Title}) or a step ({Job, after}). */
 function apiCreate(table, rec) {
-  requireAdmin_();
+  requireStaff_();
   rec = rec || {};
   return withLock_(() => {
     if (table === 'Jobs' || table === 'Models') {
@@ -128,7 +112,7 @@ function apiCreate(table, rec) {
 
 /** Changes text / list / yes-no fields of one row. */
 function apiSet(table, id, fields) {
-  requireAdmin_();
+  requireStaff_();
   if (!EDITABLE[table]) throw new Error('Unknown table: ' + table);
   return withLock_(() => {
     const rows = readTable_(table);
@@ -158,7 +142,7 @@ function apiSet(table, id, fields) {
  * upload = {mime, data (base64), name}. upload null clears the field.
  */
 function apiAttach(table, id, field, upload) {
-  requireAdmin_();
+  requireStaff_();
   let kind;
   if (table === 'Settings') {
     if (!/_sound$/.test(id) || !SETTINGS.some(s => s[0] === id)) throw new Error('Unknown setting: ' + id);
@@ -186,7 +170,7 @@ function apiAttach(table, id, field, upload) {
 
 /** Moves a job, model or step one place up (dir -1) or down (dir 1). Steps move within their job. */
 function apiMove(table, id, dir) {
-  requireAdmin_();
+  requireStaff_();
   if (['Jobs', 'Models', 'Steps'].indexOf(table) === -1) throw new Error('Unknown table: ' + table);
   return withLock_(() => {
     const rows = readTable_(table);
@@ -204,7 +188,7 @@ function apiMove(table, id, dir) {
 }
 
 function apiDuplicateStep(id) {
-  requireAdmin_();
+  requireStaff_();
   return withLock_(() => {
     const rows = readTable_('Steps');
     const row = rows.find(r => r.ID === id);
@@ -225,7 +209,7 @@ function apiDuplicateStep(id) {
  * are deleted) or a step.
  */
 function apiDelete(table, id) {
-  requireAdmin_();
+  requireStaff_();
   return withLock_(() => {
     const rows = readTable_(table);
     const row = rows.find(r => r.ID === id);
@@ -261,7 +245,7 @@ function apiDelete(table, id) {
 }
 
 function apiSetSettings(values) {
-  requireAdmin_();
+  requireStaff_();
   return withLock_(() => {
     const clean = {};
     Object.keys(values || {}).forEach(k => {
@@ -269,15 +253,6 @@ function apiSetSettings(values) {
       if (!def || INTERNAL_SETTINGS.indexOf(k) !== -1 || /_sound$/.test(k)) return;
       clean[k] = String(values[k] === null || values[k] === undefined ? '' : values[k]).trim();
     });
-    if (clean.admins !== undefined) {
-      const list = clean.admins.toLowerCase().split(/[\s,;]+/).filter(Boolean);
-      const bad = list.filter(e => !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e));
-      if (bad.length) throw new Error('Not an email: ' + bad.join(', '));
-      if (list.indexOf(currentUser_()) === -1 && currentUser_() !== String(Session.getEffectiveUser().getEmail()).toLowerCase()) {
-        throw new Error('Keep your own account in the admin list.');
-      }
-      clean.admins = list.join(', ');
-    }
     const before = settings_();
     setSettings_(clean);
     const changed = Object.keys(clean).filter(k => before[k] !== clean[k]);
@@ -291,7 +266,7 @@ function apiSetSettings(values) {
 
 /** Saves the GitHub token after checking it can write to the repo. Empty removes it. */
 function apiSetToken(token) {
-  requireAdmin_();
+  requireStaff_();
   token = String(token || '').trim();
   const props = PropertiesService.getScriptProperties();
   if (!token) {
@@ -306,6 +281,6 @@ function apiSetToken(token) {
 }
 
 function apiPublish() {
-  requireAdmin_();
+  requireStaff_();
   return withLock_(() => ({ result: publish_(), data: payload_() }));
 }

@@ -366,13 +366,11 @@
     const s = S.d.settings;
     const text = (k, label, ar) => '<div class="field"><label>' + label + '</label><input class="' + (ar ? 'ar-input' : '') + '" data-key="Settings:' + k + '" data-setting="' + k + '" value="' + esc(s[k]) + '"></div>';
     const prompt = (k, label) => '<div class="prompt-row">' + text(k, label, true) + slot('Settings', k + '_sound', 'Value', 'audio', s[k + '_sound']) + '</div>';
-    return '<div class="page-head"><div><h1>Settings</h1><p>Site texts, spoken questions, who can edit, and publishing.</p></div>' +
+    return '<div class="page-head"><div><h1>Settings</h1><p>Site texts, spoken questions and publishing.</p></div>' +
       '<div class="head-actions"><a class="btn" target="_blank" rel="noopener" href="' + esc(S.d.sheetUrl) + '">' + I.sheet + 'Google Sheet</a>' +
       (S.d.folderUrl ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(S.d.folderUrl) + '">' + I.image + 'Media folder</a>' : '') + '</div></div>' +
       '<div class="set-grid">' +
-      '<div class="card card-pad"><h3>Site</h3><div class="form">' + text('title', 'Title', true) + text('subtitle', 'Subtitle', true) + '</div></div>' +
-      '<div class="card card-pad"><h3>Editors</h3><div class="field"><label>Google accounts that can open this editor</label>' +
-      '<textarea data-key="Settings:admins" data-setting="admins" rows="3" class="mono">' + esc(s.admins) + '</textarea><span class="hint">Comma separated. Saved when you click outside the box.</span></div></div>' +
+      '<div class="card card-pad full"><h3>Site</h3><div class="form">' + text('title', 'Title', true) + text('subtitle', 'Subtitle', true) + '</div></div>' +
       '<div class="card card-pad full"><h3>Spoken questions <small>the text and the voice on each choosing screen</small></h3><div class="steps">' +
       prompt('ask_job', 'Jobs screen') + prompt('ask_model', 'Models screen') + prompt('ask_done', 'Last screen') + '</div></div>' +
       '<div class="card card-pad full"><h3>Publishing</h3>' +
