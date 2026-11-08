@@ -88,7 +88,10 @@ svg { display: block; }
 }
 .card:active { transform: scale(.97); border-color: var(--brand-2); }
 .card .pic { aspect-ratio: 4 / 3; background: var(--brand-soft); }
-.card .pic img { width: 100%; height: 100%; object-fit: cover; }
+.card .pic { position: relative; }
+.card .pic:not(.ok)::after { content: ""; position: absolute; inset: 0; margin: auto; width: 34px; height: 34px; border-radius: 50%; border: 4px solid rgba(33, 68, 154, .15); border-top-color: var(--brand); animation: spin .8s linear infinite; }
+.card .pic img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .25s; }
+.card .pic.ok img { opacity: 1; }
 .card .label { padding: 12px 8px 14px; font-size: 22px; font-weight: 800; line-height: 1.25; }
 .card .label small { display: block; font-size: 15px; font-weight: 600; color: var(--muted); }
 
@@ -118,6 +121,15 @@ svg { display: block; }
   background: rgba(15, 23, 42, .55); color: #fff;
 }
 .media .zoom-hint svg { width: 24px; height: 24px; }
+.loading-media { width: 100%; height: 100%; display: grid; place-content: center; justify-items: center; gap: 12px; background: var(--brand-soft); color: var(--brand); padding: 16px; }
+.loading-media .lm-bar { width: min(260px, 70vw); height: 12px; border-radius: 999px; background: rgba(33, 68, 154, .15); overflow: hidden; }
+.loading-media .lm-bar span { display: block; height: 100%; background: var(--brand); border-radius: 999px; transition: width .2s; }
+.loading-media .lm-txt { font-size: 20px; font-weight: 800; }
+.loading-media.failed { background: var(--amber-soft); color: var(--amber); }
+.loading-media.failed > svg { width: 48px; height: 48px; }
+.loading-media .wide-btn { width: auto; padding: 0 22px; height: 60px; font-size: 20px; margin: 0; }
+.speak.loading { background: var(--muted); }
+.speak.loading svg { animation: pulse 1s infinite; opacity: .6; }
 .media .unmute {
   position: absolute; inset: 0; margin: auto; width: 96px; height: 96px; border-radius: 50%;
   display: grid; place-items: center; background: rgba(21, 128, 61, .92); color: #fff; box-shadow: var(--shadow);

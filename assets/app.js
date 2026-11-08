@@ -60,25 +60,52 @@
   // ---------------------------------------------------------------- saving on the phone
   // Everything opened is kept. Pictures of the first two screens are saved at start; a guide's
   // media is saved when the guide is opened. Old files no longer in the content are removed.
+  // One download per file at a time: the step screen and the background "save the guide" share it,
+  // and the step screen gets byte progress for its loading bar.
+  const inflight = {};
+  function fetchMedia(url, onProgress) {
+    const cur = inflight[url];
+    if (cur) { if (onProgress) cur.listeners.push(onProgress); return cur.p; }
+    const entry = inflight[url] = { listeners: onProgress ? [onProgress] : [] };
+    entry.p = (async () => {
+      const cache = window.caches ? await caches.open(MEDIA_CACHE) : null;
+      const hit = cache && await cache.match(url);
+      if (hit) return await hit.blob();
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(String(res.status));
+      const total = Number(res.headers.get('content-length')) || 0;
+      const type = res.headers.get('content-type') || '';
+      let blob;
+      if (res.body && res.body.getReader) {
+        const reader = res.body.getReader();
+        const parts = [];
+        let got = 0;
+        for (;;) {
+          const r = await reader.read();
+          if (r.done) break;
+          parts.push(r.value);
+          got += r.value.length;
+          entry.listeners.forEach(f => { try { f(got, total); } catch (e) { /* screen changed */ } });
+        }
+        blob = new Blob(parts, { type: type });
+      } else {
+        blob = await res.blob();
+      }
+      if (cache && !(await cache.match(url))) {
+        const keep = () => cache.put(url, new Response(blob, { headers: { 'Content-Type': type } }));
+        try { await keep(); } catch (e) {           // phone storage full: drop unused files, try once more
+          try { await removeUnused(); await keep(); } catch (e2) { /* shown, not saved */ }
+        }
+      }
+      return blob;
+    })().finally(() => { delete inflight[url]; });
+    return entry.p;
+  }
   async function cacheUrls(urls, onProgress) {
     if (!window.caches) return false;
-    const cache = await caches.open(MEDIA_CACHE);
     let done = 0, ok = true;
     for (const u of urls) {
-      try {
-        if (!(await cache.match(u))) {
-          const res = await fetch(u);
-          if (!res.ok) throw new Error(res.status);
-          try {
-            await cache.put(u, res.clone());
-          } catch (e) {          // phone storage full: drop files that are no longer used, try once more
-            await removeUnused();
-            await cache.put(u, res.clone());
-          }
-        }
-      } catch (e) {
-        ok = false;
-      }
+      try { await fetchMedia(u); } catch (e) { ok = false; }
       done++;
       if (onProgress) onProgress(done, urls.length);
     }
@@ -149,16 +176,18 @@
   let playingBtn = null;
   function stopSound() {
     player.pause();
+    document.querySelectorAll('.speak.loading').forEach(b => b.classList.remove('loading'));
     if (playingBtn) { playingBtn.classList.remove('playing'); playingBtn.innerHTML = I.speaker; playingBtn = null; }
   }
   function playSound(src, btn) {
     stopSound();
     if (!src) return;
     player.src = src;
+    if (btn) btn.classList.add('loading');
     player.play().then(() => {
       playingBtn = btn || null;
-      if (btn) { btn.classList.add('playing'); btn.innerHTML = I.stop; }
-    }, () => { /* blocked until the worker taps; the speaker button still works */ });
+      if (btn) { btn.classList.remove('loading'); btn.classList.add('playing'); btn.innerHTML = I.stop; }
+    }, () => { if (btn) btn.classList.remove('loading'); /* blocked until the worker taps; the speaker button still works */ });
   }
   player.addEventListener('ended', stopSound);
   const speakBtn = src => src ? '<button class="speak" data-act="speak" data-src="' + esc(src) + '" aria-label="اسمع">' + I.speaker + '</button>' : '';
@@ -198,7 +227,7 @@
 
   // ---------------------------------------------------------------- screens
   function card(href, img, label, sub) {
-    return '<a class="card" href="' + href + '" data-tap="1"><div class="pic">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '') + '</div>' +
+    return '<a class="card" href="' + href + '" data-tap="1"><div class="pic">' + (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" onload="this.parentNode.classList.add(\'ok\')" onerror="this.parentNode.classList.add(\'ok\')">' : '') + '</div>' +
       '<div class="label">' + esc(label) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div></a>';
   }
   function grid(cards) {
@@ -255,10 +284,7 @@
     const total = steps.length, n = r.n;
     renderTop(o.title, m.title);
 
-    const media = s.video
-      ? '<video src="' + esc(s.video) + '"' + (s.image ? ' poster="' + esc(s.image) + '"' : '') + ' muted playsinline preload="auto"' + (s.audio ? ' loop' : '') + ' data-act="video"></video>' +
-        (s.audio ? '' : '<button class="unmute" data-act="unmute" aria-label="شغّل الصوت" hidden>' + I.speaker + '</button>')
-      : s.image ? '<img src="' + esc(s.image) + '" alt="" data-act="zoom"><span class="zoom-hint" aria-hidden="true">' + I.zoom + '</span>' : '';
+    const media = (s.video || s.image) ? loadingHtml(0, 0) : '';
     $('#main').innerHTML =
       '<div class="step-head"><div class="step-no">' + num(n) + '</div><div class="step-of"><div class="of">خطوة ' + num(n) + ' من ' + num(total) + '</div>' +
       '<div class="dots">' + steps.map((x, i) => '<i class="' + (i + 1 === n ? 'now' : i + 1 < n ? 'on' : '') + '"></i>').join('') + '</div></div></div>' +
@@ -275,8 +301,50 @@
 
     const tapped = userTap;
     autoSpeak(s.audio);
-    if (s.video) startVideo(!s.audio && tapped);
-    saveGuide(steps);
+    if (s.video || s.image) showStepMedia(s, tapped, ++mediaSeq);
+    saveGuide(steps, s);
+  }
+
+  // ---------------------------------------------------------------- step picture / video
+  let mediaSeq = 0;
+  let shownUrls = [];
+  const mb = n => num(Math.round(n / 104857.6) / 10);
+  function loadingHtml(got, total) {
+    const pct = total ? Math.min(100, Math.round(got / total * 100)) : 0;
+    return '<div class="loading-media"><div class="spinner"></div>' +
+      '<div class="lm-bar"><span style="width:' + (total ? pct : 8) + '%"></span></div>' +
+      '<div class="lm-txt">بيحمّل' + (total ? ' ' + num(pct) + '٪' : got ? ' ' + mb(got) + ' ميجا' : '…') + '</div></div>';
+  }
+  /** Downloads the step's video (or picture) with a loading bar, then shows it. */
+  async function showStepMedia(s, tapped, seq) {
+    const box = document.querySelector('.media');
+    const url = abs(s.video || s.image);
+    const still = () => seq === mediaSeq && document.body.contains(box);
+    let last = 0;
+    const progress = (got, total) => {
+      if (!still() || Date.now() - last < 150) return;
+      last = Date.now();
+      box.innerHTML = loadingHtml(got, total);
+    };
+    let blob;
+    try {
+      blob = await fetchMedia(url, progress);
+    } catch (e) {
+      if (still()) box.innerHTML = '<div class="loading-media failed">' + I.offline + '<div class="lm-txt">مش متحمل · محتاج نت</div>' +
+        '<button class="wide-btn plain" data-act="retryMedia">' + I.restart + 'جرّب تاني</button></div>';
+      return;
+    }
+    if (!still()) return;
+    shownUrls.forEach(u => URL.revokeObjectURL(u));
+    const src = URL.createObjectURL(blob);
+    shownUrls = [src];
+    if (s.video) {
+      box.innerHTML = '<video src="' + src + '" muted playsinline preload="auto"' + (s.audio ? ' loop' : '') + ' data-act="video"></video>' +
+        (s.audio ? '' : '<button class="unmute" data-act="unmute" aria-label="شغّل الصوت" hidden>' + I.speaker + '</button>');
+      startVideo(!s.audio && tapped);
+    } else {
+      box.innerHTML = '<img src="' + src + '" alt="" data-act="zoom"><span class="zoom-hint" aria-hidden="true">' + I.zoom + '</span>';
+    }
   }
 
   /**
@@ -296,8 +364,9 @@
 
   /** Saves the whole guide (this job + model) on the phone and shows its state under the step. */
   let savingKey = '';
-  async function saveGuide(steps) {
-    const urls = Array.from(new Set([].concat(...steps.map(mediaOf)).map(abs)));
+  async function saveGuide(steps, now) {
+    const first = now ? mediaOf(now) : [];
+    const urls = Array.from(new Set(first.concat(...steps.map(mediaOf)).map(abs)));
     const key = location.hash.split('/').slice(0, 3).join('/');
     const badge = (cls, ico, text) => {
       const el = $('#savedBadge');
@@ -393,6 +462,7 @@
     }
     if (act === 'problem') { renderDone(route(), true); return; }
     if (act === 'retry') { start(); }
+    if (act === 'retryMedia') { render(); }
   });
   $('#zoom').addEventListener('click', ev => { if (ev.target.id === 'zoom' || ev.target.tagName === 'IMG') closeZoom(); });
   document.addEventListener('keydown', ev => {    // for testing on a computer

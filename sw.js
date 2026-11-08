@@ -6,7 +6,7 @@
  *    changes, so a saved file never goes stale). Videos support range requests for playback.
  * Cache names must match assets/app.js.
  */
-const SHELL = 'cft-shell-v2';
+const SHELL = 'cft-shell-v3';
 const CONTENT = 'cft-content-v1';
 const MEDIA = 'cft-media-v1';
 const SHELL_FILES = [
@@ -94,14 +94,15 @@ async function contentFirst(key) {
 /** Pictures, videos and sounds: from the phone when saved, otherwise downloaded and saved. */
 async function media(req, key) {
   const cache = await caches.open(MEDIA);
-  let res = await cache.match(key);
-  if (!res) {
-    res = await fetch(key);                     // whole file, even when the player asked for a range
-    if (!res.ok) return res;
-    try { await cache.put(key, res.clone()); } catch (e) { /* phone storage full: still show it */ }
-  }
+  const hit = await cache.match(key);
   const range = req.headers.get('range');
-  return range ? partial(res, range) : res;
+  if (hit) return range ? partial(hit, range) : hit;
+  // Not saved yet: download the whole file (even when a player asked for a range) and stream it to
+  // the page while it is being saved, so the page can show download progress.
+  const res = await fetch(key);
+  if (!res.ok) return res;
+  cache.put(key, res.clone()).catch(() => { /* phone storage full: still show it */ });
+  return res;
 }
 
 /** A 206 slice of a saved file, for video players that ask for byte ranges. */
