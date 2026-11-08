@@ -1,5 +1,5 @@
 {
- "version": "2026-11-08.035404",
+ "version": "2026-11-08.035452",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -56,7 +56,7 @@
    "id": "wrover",
    "title": "النسخة رقم 1 - WROVER",
    "image": "media/model-wrover.svg",
-   "audio": ""
+   "audio": "media/1a586fea27ee1496.weba"
   },
   {
    "id": "xiao-c3",
