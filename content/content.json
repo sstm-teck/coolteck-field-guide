@@ -1,5 +1,5 @@
 {
- "version": "2026-11-10.213615.644",
+ "version": "2026-11-10.214514.389",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -330,8 +330,8 @@
    {
     "id": "s-61b0b5d0",
     "models": [],
-    "warning": false,
-    "text": "افصل الكهربا عن الجهاز الأول",
+    "warning": true,
+    "text": "1. افصل الكهربا عن الجهاز",
     "image": "media/step-placeholder.svg",
     "video": "media/d9d253923e45ca81.mp4",
     "audio": ""
@@ -340,7 +340,7 @@
     "id": "s-cbf05d39",
     "models": [],
     "warning": false,
-    "text": "افتح غطا العلبة",
+    "text": "2. شيل الجهاز من الحيطة",
     "image": "media/step-placeholder.svg",
     "video": "media/8100ea873974f8ea.mp4",
     "audio": ""
@@ -349,7 +349,7 @@
     "id": "s-4da951e5",
     "models": [],
     "warning": false,
-    "text": "حط البطارية في مكانها",
+    "text": "3. شيل الغطا بتاع الجهاز وامسك الجهاز من تحت عشان الأنتينا متفصلش وفك الغطا براحة",
     "image": "media/step-placeholder.svg",
     "video": "media/762578ec6c2cd4d9.mp4",
     "audio": ""
@@ -358,7 +358,7 @@
     "id": "s-49cc395a",
     "models": [],
     "warning": true,
-    "text": "وصّل سلك البطارية: الأحمر على +",
+    "text": "4. لو الأنتينا فصلت منك بالغلط",
     "image": "media/step-placeholder.svg",
     "video": "media/5e836e08186b942d.mp4",
     "audio": ""
@@ -367,7 +367,7 @@
     "id": "s-dfb583e7",
     "models": [],
     "warning": false,
-    "text": "اقفل الغطا ورجّع الكهربا",
+    "text": "5. شيل سلك الباور بعد ما صورت",
     "image": "media/step-placeholder.svg",
     "video": "media/1a64fb3be78de9ce.mp4",
     "audio": ""
@@ -376,7 +376,7 @@
     "id": "s-3064fac4",
     "models": [],
     "warning": false,
-    "text": "",
+    "text": "6. شوف توصيلة البطارية",
     "image": "",
     "video": "media/43c59114fae6ca85.mp4",
     "audio": ""
@@ -385,7 +385,7 @@
     "id": "s-06f1075c",
     "models": [],
     "warning": false,
-    "text": "",
+    "text": "7. وصل البطارية بالأدابتور وتتأكد مفيش سلك نحاس طالع لبرة",
     "image": "",
     "video": "media/17eda00847120ee3.mp4",
     "audio": ""
@@ -394,7 +394,7 @@
     "id": "s-10ae2042",
     "models": [],
     "warning": false,
-    "text": "",
+    "text": "8. وصل الكهربا تاني عشان تتأكد من النور الأزرق بتاع البطارية",
     "image": "",
     "video": "media/f7c2b2168d279a92.mp4",
     "audio": ""
@@ -403,7 +403,7 @@
     "id": "s-d3996289",
     "models": [],
     "warning": false,
-    "text": "",
+    "text": "9. افصل الباور ودخل سلك البطارية بنفس الترتيب اللي كان موجود",
     "image": "",
     "video": "",
     "audio": ""
