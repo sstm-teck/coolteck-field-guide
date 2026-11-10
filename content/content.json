@@ -1,5 +1,5 @@
 {
- "version": "2026-11-10.201909.070",
+ "version": "2026-11-10.203306.686",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -79,7 +79,7 @@
     "warning": true,
     "text": "افصل الكهربا عن الجهاز الأول",
     "image": "media/step-placeholder.svg",
-    "video": "",
+    "video": "media/5d7876869d5a489b.mp4",
     "audio": ""
    },
    {
@@ -97,7 +97,7 @@
     "warning": false,
     "text": "فك الحساسات وعلّم كل واحد برقمه",
     "image": "media/step-placeholder.svg",
-    "video": "",
+    "video": "media/6c42a12ceb6d5eae.mp4",
     "audio": ""
    },
    {
@@ -180,7 +180,7 @@
     "warning": true,
     "text": "1.افصل الكهربا عن الجهاز ولو لقيت الجهاز لسه شغال يبقي جواه بطارية",
     "image": "media/step-placeholder.svg",
-    "video": "",
+    "video": "media/99eadcea2ca60123.mp4",
     "audio": ""
    },
    {
@@ -189,7 +189,7 @@
     "warning": false,
     "text": "2. شيل الجهاز من الحيطة",
     "image": "media/step-placeholder.svg",
-    "video": "",
+    "video": "media/d3af5e515bcfa4cb.mp4",
     "audio": ""
    },
    {
@@ -371,6 +371,123 @@
     "warning": false,
     "text": "اقفل الغطا ورجّع الكهربا",
     "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-3064fac4",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-06f1075c",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-10ae2042",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-d3996289",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-1f852eff",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-b5694622",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-4f164416",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-8ae5a64e",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-94c97747",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-cd69bd90",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-919f3202",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-53a38377",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-cbbb1195",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
     "video": "",
     "audio": ""
    }
