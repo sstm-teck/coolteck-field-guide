@@ -1,5 +1,5 @@
 {
- "version": "2026-11-10.213415.951",
+ "version": "2026-11-10.213615.644",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -351,7 +351,7 @@
     "warning": false,
     "text": "حط البطارية في مكانها",
     "image": "media/step-placeholder.svg",
-    "video": "",
+    "video": "media/762578ec6c2cd4d9.mp4",
     "audio": ""
    },
    {
@@ -360,7 +360,7 @@
     "warning": true,
     "text": "وصّل سلك البطارية: الأحمر على +",
     "image": "media/step-placeholder.svg",
-    "video": "",
+    "video": "media/5e836e08186b942d.mp4",
     "audio": ""
    },
    {
