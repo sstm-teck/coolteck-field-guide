@@ -1,5 +1,5 @@
 {
- "version": "2026-11-10.225103.584",
+ "version": "2026-11-10.225944.648",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -102,7 +102,7 @@
     "id": "s-53d4c96e",
     "models": [],
     "warning": false,
-    "text": "فك الجهاز القديم",
+    "text": "4. شيل الأسلاك بعد ما صورت عشان تعرف ترجعها",
     "image": "media/step-placeholder.svg",
     "video": "media/5e836e08186b942d.mp4",
     "audio": ""
@@ -111,7 +111,7 @@
     "id": "s-782ed75c",
     "models": [],
     "warning": false,
-    "text": "ركّب الجهاز الجديد مكانه",
+    "text": "5. شيل الجهاز القديم وسيب الغطا بتاعها عشان هناخد منها الخط بتاع العميل",
     "image": "media/step-placeholder.svg",
     "video": "media/eb99df4581777399.mp4",
     "audio": ""
@@ -120,7 +120,7 @@
     "id": "s-a44aa789",
     "models": [],
     "warning": false,
-    "text": "رجّع كل حساس في نفس رقمه",
+    "text": "6. حط الخط بتاع العميل من الجهاز القديم للجهاز الجديد (لو الجهاز الجديد مفهيوش انتنينا او غطا استخدم نفس الغطا بتاع الجهاز القديم)",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -128,8 +128,8 @@
    {
     "id": "s-852dbe8c",
     "models": [],
-    "warning": false,
-    "text": "ركّب الشريحة والإريال",
+    "warning": true,
+    "text": "7. حط الأسلاك الجهاز الجديد بنفس الترتيب والألوان واتأكد مفيش نحاس لبرة",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -138,7 +138,7 @@
     "id": "s-5cbe765b",
     "models": [],
     "warning": false,
-    "text": "رجّع الكهربا وكلّم المكتب يربطوا الجهاز الجديد",
+    "text": "8.  افصل الكهربا ودخل الأنتينا والغطا اتأكد من اللمبة ثبتت ومش بتقفل وتطفي واسأل البمشهندس الجهاز طاهر عنده ولا لأ",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -241,7 +241,7 @@
     "warning": false,
     "text": "8. حط القلاووظ بتاع السنسور قبل ما تدخله جوة العلبة مع البلاستيكة بتاعتها",
     "image": "",
-    "video": "",
+    "video": "media/e754a7709099c2e8.mp4",
     "audio": ""
    },
    {
@@ -259,7 +259,7 @@
     "warning": true,
     "text": "10. اتأكد ان مفيش نحاس لبرة",
     "image": "",
-    "video": "",
+    "video": "media/c0168f627b883be8.mp4",
     "audio": ""
    },
    {
