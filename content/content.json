@@ -1,5 +1,5 @@
 {
- "version": "2026-11-10.195734.055",
+ "version": "2026-11-10.201233.186",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -177,7 +177,7 @@
    {
     "id": "s-021d0c17",
     "models": [],
-    "warning": false,
+    "warning": true,
     "text": "4. صور الجهاز عشان متنساش اماكن الأسلاك",
     "image": "media/step-placeholder.svg",
     "video": "",
@@ -186,7 +186,7 @@
    {
     "id": "s-13ef64d0",
     "models": [],
-    "warning": false,
+    "warning": true,
     "text": "5. لو الأنتينا فكت منك ترجعها ازاي",
     "image": "media/step-placeholder.svg",
     "video": "",
@@ -196,7 +196,7 @@
     "id": "s-76e97f98",
     "models": [],
     "warning": false,
-    "text": "6.",
+    "text": "6.شيل السنسور البايظ وشوف أسلاكه بعد ما صورته",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -204,9 +204,99 @@
    {
     "id": "s-2d07cc43",
     "models": [],
-    "warning": false,
-    "text": "كلّم المكتب يتأكدوا إن القراية وصلت",
+    "warning": true,
+    "text": "7. جيب السنسور الجديد ولو طلع فيه خمس اسلاك الحم السلكين الأسود مع بعض",
     "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-61692b06",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-aee5c92e",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-f6a12913",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-9534264f",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-9e778fce",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-710f8596",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-3830ec2b",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-06091454",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-eaa0bc61",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-9f4d4bf6",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
     "video": "",
     "audio": ""
    }
