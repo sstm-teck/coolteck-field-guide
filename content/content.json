@@ -1,5 +1,5 @@
 {
- "version": "2026-11-09.231751.713",
+ "version": "2026-11-10.195734.055",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -151,7 +151,7 @@
     "id": "s-11647829",
     "models": [],
     "warning": true,
-    "text": "افصل الكهربا عن الجهاز الأول",
+    "text": "1.افصل الكهربا عن الجهاز ولو لقيت الجهاز لسه شغال يبقي جواه بطارية",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -160,7 +160,7 @@
     "id": "s-75a56c57",
     "models": [],
     "warning": false,
-    "text": "افتح غطا العلبة",
+    "text": "2. شيل الجهاز من الحيطة",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -169,7 +169,7 @@
     "id": "s-ab4074da",
     "models": [],
     "warning": false,
-    "text": "شوف رقم مكان الحساس القديم واحفظه",
+    "text": "3. شيل غطا العلبة وخليك ماسك العلبة من تحت وانت بتفك عشان الغطا ميقعش منك وبعدها شيل الانتينا",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -178,7 +178,7 @@
     "id": "s-021d0c17",
     "models": [],
     "warning": false,
-    "text": "اسحب فيشة الحساس القديم",
+    "text": "4. صور الجهاز عشان متنساش اماكن الأسلاك",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -187,7 +187,7 @@
     "id": "s-13ef64d0",
     "models": [],
     "warning": false,
-    "text": "ركّب الحساس الجديد في نفس المكان",
+    "text": "5. لو الأنتينا فكت منك ترجعها ازاي",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
@@ -196,7 +196,7 @@
     "id": "s-76e97f98",
     "models": [],
     "warning": false,
-    "text": "اقفل الغطا ورجّع الكهربا",
+    "text": "6.",
     "image": "media/step-placeholder.svg",
     "video": "",
     "audio": ""
