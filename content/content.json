@@ -1,5 +1,5 @@
 {
- "version": "2026-11-10.201755.192",
+ "version": "2026-11-10.201909.070",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -142,6 +142,33 @@
     "warning": false,
     "text": "رجّع الكهربا وكلّم المكتب يربطوا الجهاز الجديد",
     "image": "media/step-placeholder.svg",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-2b6c99cb",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-0877d5cd",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
+    "video": "",
+    "audio": ""
+   },
+   {
+    "id": "s-551991f7",
+    "models": [],
+    "warning": false,
+    "text": "",
+    "image": "",
     "video": "",
     "audio": ""
    }
