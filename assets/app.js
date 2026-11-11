@@ -358,10 +358,11 @@
     shownUrls = [src];
     if (s.video) {
       box.innerHTML = '<video src="' + src + '" muted playsinline preload="auto"' + (s.audio ? ' loop' : '') + ' data-act="video"></video>' +
-        (s.audio ? '' : '<button class="unmute" data-act="unmute" aria-label="شغّل الصوت" hidden>' + I.speaker + '</button>');
+        (s.audio ? '' : '<button class="unmute" data-act="unmute" aria-label="شغّل الصوت" hidden>' + I.speaker + '</button>') +
+        '<button class="fs-btn" data-act="fullscreen" aria-label="ملء الشاشة">' + I.zoom + '</button>';
       startVideo(!s.audio && tapped);
     } else {
-      box.innerHTML = '<img src="' + src + '" alt="" data-act="zoom"><span class="zoom-hint" aria-hidden="true">' + I.zoom + '</span>';
+      box.innerHTML = '<img src="' + src + '" alt="" data-act="zoom">' + '<button class="fs-btn" data-act="fullscreen" aria-label="ملء الشاشة">' + I.zoom + '</button>';
     }
   }
 
@@ -448,6 +449,42 @@
   }
 
   // ---------------------------------------------------------------- full-screen picture
+  /**
+   * Full screen for the step's video or picture. Videos use the phone's own full-screen player
+   * (with play/pause controls, turned sideways for wide videos when the phone allows it).
+   * Pictures open the zoom view, made full screen where the browser supports it.
+   */
+  function goFullscreen() {
+    const v = document.querySelector('.media video');
+    if (v) {
+      const go = v.requestFullscreen || v.webkitRequestFullscreen;
+      if (go) {
+        v.controls = true;
+        Promise.resolve(go.call(v)).then(() => {
+          if (v.videoWidth > v.videoHeight && screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
+        }, () => { v.controls = false; });
+      } else if (v.webkitEnterFullscreen) {
+        v.webkitEnterFullscreen();   // iPhone
+      }
+      return;
+    }
+    const img = document.querySelector('.media img');
+    if (!img) return;
+    openZoom(img.getAttribute('src'));
+    const z = $('#zoom');
+    const go = z.requestFullscreen || z.webkitRequestFullscreen;
+    if (go) Promise.resolve(go.call(z)).catch(() => { /* the zoom view already fills the screen */ });
+  }
+  function onFullscreenChange() {
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+    const v = document.querySelector('.media video');
+    if (v) v.controls = false;
+    try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) { /* not supported */ }
+    if (!$('#zoom').hidden) closeZoom();
+  }
+  document.addEventListener('fullscreenchange', onFullscreenChange);
+  document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+
   // The zoomed picture gets its own history entry, so the phone's Back button closes it.
   function openZoom(src) {
     const z = $('#zoom');
@@ -459,6 +496,7 @@
     const z = $('#zoom');
     if (z.hidden) return;
     z.hidden = true; z.innerHTML = '';
+    if (document.fullscreenElement === z && document.exitFullscreen) document.exitFullscreen().catch(() => {});
     if (!fromBack && history.state && history.state.zoom) history.back();
   }
   window.addEventListener('popstate', () => { if (!$('#zoom').hidden) closeZoom(true); });
@@ -473,6 +511,7 @@
     if (act === 'home') { go('#/'); return; }
     if (act === 'speak') { if (playingBtn === el) stopSound(); else playSound(el.dataset.src, el); return; }
     if (act === 'zoom') { openZoom(el.getAttribute('src')); return; }
+    if (act === 'fullscreen') { goFullscreen(); return; }
     if (act === 'unzoom') { closeZoom(); return; }
     if (act === 'video') {
       const unmute = document.querySelector('.media .unmute');
