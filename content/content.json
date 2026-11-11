@@ -1,5 +1,5 @@
 {
- "version": "2026-11-10.231817.182",
+ "version": "2026-11-11.220429.555",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -77,7 +77,7 @@
     "warning": true,
     "text": "1.افصل الكهربا عن الجهاز الأول وشيل الجهاز من الحيطة",
     "image": "media/step-placeholder.svg",
-    "video": "media/5d7876869d5a489b.mp4",
+    "video": "media/653ba8da90963e73.mp4",
     "audio": ""
    },
    {
@@ -86,7 +86,7 @@
     "warning": true,
     "text": "2. فك الغطا بتاع العلبة وامسك العلبة من تحت عشان الغطا ميتفكش مع الأنتينا وصور العلبة من جوة قبل ما تفك اي سلك عشان تعرف أماكن الأسلاك",
     "image": "media/step-placeholder.svg",
-    "video": "media/d3af5e515bcfa4cb.mp4",
+    "video": "media/980ecb55287ffce5.mp4",
     "audio": ""
    },
    {
@@ -95,7 +95,7 @@
     "warning": true,
     "text": "3. لو الأنتينا فصلت معاك",
     "image": "media/step-placeholder.svg",
-    "video": "media/6c42a12ceb6d5eae.mp4",
+    "video": "media/378b51d1064e19b1.mp4",
     "audio": ""
    },
    {
@@ -104,7 +104,7 @@
     "warning": false,
     "text": "4. شيل الأسلاك بعد ما صورت عشان تعرف ترجعها",
     "image": "media/step-placeholder.svg",
-    "video": "media/5e836e08186b942d.mp4",
+    "video": "media/5cfd725bde7b5c4c.mp4",
     "audio": ""
    },
    {
@@ -113,7 +113,7 @@
     "warning": false,
     "text": "5. شيل الجهاز القديم وسيب الغطا بتاعها عشان هناخد منها الخط بتاع العميل",
     "image": "media/step-placeholder.svg",
-    "video": "media/eb99df4581777399.mp4",
+    "video": "media/9c9171166a380c41.mp4",
     "audio": ""
    },
    {
@@ -122,7 +122,7 @@
     "warning": false,
     "text": "6. حط الخط بتاع العميل من الجهاز القديم للجهاز الجديد (لو الجهاز الجديد مفهيوش انتنينا او غطا استخدم نفس الغطا بتاع الجهاز القديم)",
     "image": "media/step-placeholder.svg",
-    "video": "media/bbd8d71dd8689ee8.mp4",
+    "video": "media/bd310ee1f1c2a8e9.mp4",
     "audio": ""
    },
    {
@@ -131,7 +131,7 @@
     "warning": true,
     "text": "7. حط الأسلاك الجهاز الجديد بنفس الترتيب والألوان واتأكد مفيش نحاس لبرة",
     "image": "media/step-placeholder.svg",
-    "video": "media/38646d0783fb3255.mp4",
+    "video": "media/52f7b55157ac308c.mp4",
     "audio": ""
    },
    {
@@ -140,7 +140,7 @@
     "warning": false,
     "text": "8.  افصل الكهربا ودخل الأنتينا والغطا اتأكد من اللمبة ثبتت ومش بتقفل وتطفي واسأل البمشهندس الجهاز طاهر عنده ولا لأ",
     "image": "media/step-placeholder.svg",
-    "video": "media/c8e86c14adaf2906.mp4",
+    "video": "media/a20d3fccd5566dc9.mp4",
     "audio": ""
    },
    {
@@ -149,7 +149,7 @@
     "warning": false,
     "text": "9. قفل الجهاز مظبوط من جوة ومتطلعش اي سلك لبرة واقفل الغطا في الاتجاه الصحيح (المستطيل عند المستطيل والفتحة بتاعت اللمبة عند اللمبة واتأكد انك مش مغطي اللمبة لما قفلت)",
     "image": "",
-    "video": "media/6c6373b74d0d35b7.mp4",
+    "video": "media/2aa576c6ad9b3988.mp4",
     "audio": ""
    },
    {
@@ -158,7 +158,7 @@
     "warning": false,
     "text": "10. اقفل العلبة وامسك في الغطا وحط ال 4 مسامير",
     "image": "",
-    "video": "media/9324e6d1b7e6095d.mp4",
+    "video": "media/b856b6ae7bca4077.mp4",
     "audio": ""
    },
    {
@@ -167,7 +167,7 @@
     "warning": false,
     "text": "11. بص علي اللمبة اتأكد انها ثبتت ومش بتنور وتطفي كل شوية وبعدها اسأل البشمهندس الجهاز ظاهر عنده ولا لأ؟",
     "image": "",
-    "video": "media/1d3d7effd54e1239.mp4",
+    "video": "media/c782fe2dbd210d6e.mp4",
     "audio": ""
    }
   ],
@@ -178,7 +178,7 @@
     "warning": true,
     "text": "1.افصل الكهربا عن الجهاز ولو لقيت الجهاز لسه شغال يبقي جواه بطارية",
     "image": "media/step-placeholder.svg",
-    "video": "media/99eadcea2ca60123.mp4",
+    "video": "media/590c09ef4f485ae4.mp4",
     "audio": ""
    },
    {
@@ -187,7 +187,7 @@
     "warning": false,
     "text": "2. شيل الجهاز من الحيطة",
     "image": "media/step-placeholder.svg",
-    "video": "media/d3af5e515bcfa4cb.mp4",
+    "video": "media/980ecb55287ffce5.mp4",
     "audio": ""
    },
    {
@@ -196,7 +196,7 @@
     "warning": false,
     "text": "3. شيل غطا العلبة وخليك ماسك العلبة من تحت وانت بتفك عشان الغطا ميقعش منك وبعدها شيل الانتينا",
     "image": "media/step-placeholder.svg",
-    "video": "media/45ad91827012101f.mp4",
+    "video": "media/3af2487f73274855.mp4",
     "audio": ""
    },
    {
@@ -205,7 +205,7 @@
     "warning": true,
     "text": "4. صور الجهاز عشان متنساش اماكن الأسلاك",
     "image": "media/step-placeholder.svg",
-    "video": "media/f58a7e1c058a2c4a.mp4",
+    "video": "media/0422023c044039cd.mp4",
     "audio": ""
    },
    {
@@ -214,7 +214,7 @@
     "warning": true,
     "text": "5. لو الأنتينا فكت منك ترجعها ازاي",
     "image": "media/step-placeholder.svg",
-    "video": "media/edd9cb0838685ed7.mp4",
+    "video": "media/f68518e70944fa8f.mp4",
     "audio": ""
    },
    {
@@ -223,7 +223,7 @@
     "warning": false,
     "text": "6.شيل السنسور البايظ وشوف أسلاكه بعد ما صورته",
     "image": "media/step-placeholder.svg",
-    "video": "media/d2690a70b1ed5e03.mp4",
+    "video": "media/6d6c1c8494a51f87.mp4",
     "audio": ""
    },
    {
@@ -232,7 +232,7 @@
     "warning": true,
     "text": "7. جيب السنسور الجديد ولو طلع فيه خمس اسلاك الحم السلكين الأسود مع بعض",
     "image": "media/step-placeholder.svg",
-    "video": "media/677af0c5d16e6274.mp4",
+    "video": "media/06d1b434a2edbfed.mp4",
     "audio": ""
    },
    {
@@ -241,7 +241,7 @@
     "warning": false,
     "text": "8. حط القلاووظ بتاع السنسور قبل ما تدخله جوة العلبة مع البلاستيكة بتاعتها",
     "image": "",
-    "video": "media/e754a7709099c2e8.mp4",
+    "video": "media/c69ecfe57c01e1b7.mp4",
     "audio": ""
    },
    {
@@ -250,7 +250,7 @@
     "warning": false,
     "text": "9. دخل أسلاك السنسور بنفس الترتيب والألوان",
     "image": "",
-    "video": "media/62491ebe60259f84.mp4",
+    "video": "media/19d0d7213be7725e.mp4",
     "audio": ""
    },
    {
@@ -259,7 +259,7 @@
     "warning": true,
     "text": "10. اتأكد ان مفيش نحاس لبرة",
     "image": "",
-    "video": "media/c0168f627b883be8.mp4",
+    "video": "media/06b6b8b45ab8708b.mp4",
     "audio": ""
    },
    {
@@ -268,7 +268,7 @@
     "warning": false,
     "text": "11. قفل القلاووظ بتاع السنسور عشان تثبته",
     "image": "",
-    "video": "media/bb06bc20a95812f6.mp4",
+    "video": "media/aee2f51e5407ab24.mp4",
     "audio": ""
    },
    {
@@ -277,7 +277,7 @@
     "warning": false,
     "text": "12. رجع الأنتينا مكانها",
     "image": "",
-    "video": "media/8846add6a16b4b99.mp4",
+    "video": "media/8b7d31536db1f5bf.mp4",
     "audio": ""
    },
    {
@@ -286,7 +286,7 @@
     "warning": false,
     "text": "13. متقفلش الجهاز غير لما تتأكد من ان اللمبة ثبتت مكانها ومش بتنور وتطفي كل شوية",
     "image": "",
-    "video": "media/7aa7ebae3bbdf91d.mp4",
+    "video": "media/8220ebc7c76a5875.mp4",
     "audio": ""
    },
    {
@@ -295,7 +295,7 @@
     "warning": false,
     "text": "14. رجع غطا العلبة بالاتجاه الصحيح (المستطيل عند المستطيل وفتحة اللمبة عند مكان اللمبة عشان تشوفها)",
     "image": "",
-    "video": "media/c6377f78f81e768c.mp4",
+    "video": "media/6b4b2e69ee745de9.mp4",
     "audio": ""
    },
    {
@@ -304,7 +304,7 @@
     "warning": false,
     "text": "15. اتأكد من اللمبة بعد ما قفلت الغطا واسأل البشمهندس الجهاز تمام ولا لأ؟",
     "image": "",
-    "video": "media/77fd3156fc98c76f.mp4",
+    "video": "media/b8ddcc66e6f120b7.mp4",
     "audio": ""
    },
    {
@@ -313,7 +313,7 @@
     "warning": false,
     "text": "16. امسك غطا الجهاز من تحت واقفل العلبة بال 4 مسامير",
     "image": "",
-    "video": "media/762e0ac05aff2f68.mp4",
+    "video": "media/60b717bbe2c34272.mp4",
     "audio": ""
    },
    {
@@ -322,7 +322,7 @@
     "warning": false,
     "text": "17. رجع الجهاز مكانه واسأل البشمهندس الجهاز تمام ولا لأ؟",
     "image": "",
-    "video": "media/8c44d0afbd1f0bad.mp4",
+    "video": "media/8709692c77e28a87.mp4",
     "audio": ""
    }
   ],
@@ -333,7 +333,7 @@
     "warning": true,
     "text": "1. افصل الكهربا عن الجهاز",
     "image": "media/step-placeholder.svg",
-    "video": "media/d9d253923e45ca81.mp4",
+    "video": "media/c45ce68c554e9318.mp4",
     "audio": ""
    },
    {
@@ -342,7 +342,7 @@
     "warning": false,
     "text": "2. شيل الجهاز من الحيطة",
     "image": "media/step-placeholder.svg",
-    "video": "media/8100ea873974f8ea.mp4",
+    "video": "media/c9dd8bb5d9ebfe95.mp4",
     "audio": ""
    },
    {
@@ -351,7 +351,7 @@
     "warning": false,
     "text": "3. شيل الغطا بتاع الجهاز وامسك الجهاز من تحت عشان الأنتينا متفصلش وفك الغطا براحة",
     "image": "media/step-placeholder.svg",
-    "video": "media/380176edfc2894cd.mp4",
+    "video": "media/2b981b515a8f9122.mp4",
     "audio": ""
    },
    {
@@ -360,7 +360,7 @@
     "warning": true,
     "text": "4. لو الأنتينا فصلت منك بالغلط",
     "image": "media/step-placeholder.svg",
-    "video": "media/5e836e08186b942d.mp4",
+    "video": "media/5cfd725bde7b5c4c.mp4",
     "audio": ""
    },
    {
@@ -369,7 +369,7 @@
     "warning": false,
     "text": "5. شيل سلك الباور بعد ما صورت",
     "image": "media/step-placeholder.svg",
-    "video": "media/1a64fb3be78de9ce.mp4",
+    "video": "media/d68dd0672c430cd4.mp4",
     "audio": ""
    },
    {
@@ -378,7 +378,7 @@
     "warning": false,
     "text": "6. شوف توصيلة البطارية",
     "image": "",
-    "video": "media/43c59114fae6ca85.mp4",
+    "video": "media/3edee99efc557651.mp4",
     "audio": ""
    },
    {
@@ -387,7 +387,7 @@
     "warning": false,
     "text": "7. وصل البطارية بالأدابتور وتتأكد مفيش سلك نحاس طالع لبرة",
     "image": "",
-    "video": "media/17eda00847120ee3.mp4",
+    "video": "media/2e64bdca563be1a7.mp4",
     "audio": ""
    },
    {
@@ -396,7 +396,7 @@
     "warning": false,
     "text": "8. وصل الكهربا تاني عشان تتأكد من النور الأزرق بتاع البطارية",
     "image": "",
-    "video": "media/f7c2b2168d279a92.mp4",
+    "video": "media/18d850e83791a829.mp4",
     "audio": ""
    },
    {
@@ -405,7 +405,7 @@
     "warning": false,
     "text": "9. افصل الباور ودخل سلك البطارية بنفس الترتيب اللي كان موجود",
     "image": "",
-    "video": "media/3ffb0842dea32417.mp4",
+    "video": "media/de2d4d857984b395.mp4",
     "audio": ""
    },
    {
@@ -414,7 +414,7 @@
     "warning": false,
     "text": "10. دخل سلك البطارية واتأكد مفيش نحاس لبرة",
     "image": "",
-    "video": "media/4356eaab4c955afd.mp4",
+    "video": "media/6b8600968e796280.mp4",
     "audio": ""
    },
    {
@@ -423,7 +423,7 @@
     "warning": true,
     "text": "11. اتأكد الجهاز شغال بعد ما دخلت البطارية",
     "image": "",
-    "video": "media/a12f6808c0eca3ff.mp4",
+    "video": "media/b3dcbf900ad82b98.mp4",
     "audio": ""
    },
    {
@@ -432,7 +432,7 @@
     "warning": false,
     "text": "12. افصل البطارية ورجع الأنتينا مكانها",
     "image": "",
-    "video": "media/7eb76beb38eb20ef.mp4",
+    "video": "media/fdf1d8befef74979.mp4",
     "audio": ""
    },
    {
@@ -441,7 +441,7 @@
     "warning": false,
     "text": "13. حط البطارية تاني وهتلاقي الجهاز اشتغل",
     "image": "",
-    "video": "media/727f385812153776.mp4",
+    "video": "media/954225448b1f9bc3.mp4",
     "audio": ""
    },
    {
@@ -450,7 +450,7 @@
     "warning": false,
     "text": "14. اتأكد من اللمبة مبقتش بتقفل وتطفي بسرعة وثبتت مكانها قبل ما تقفل العلبة",
     "image": "",
-    "video": "media/c58f77d0b73d8047.mp4",
+    "video": "media/30188c8820a706ea.mp4",
     "audio": ""
    },
    {
@@ -459,7 +459,7 @@
     "warning": true,
     "text": "15. رجع الغطا واتأكد انك قفلت الجهاز مظبوط من جوة وحاطط غطا العلبة في الاتجاه الصحيح (خلي المستطيل عند المستطيل والفتحة بتاعة اللمبة مكانها الصح)",
     "image": "",
-    "video": "media/55a2378c92bce05c.mp4",
+    "video": "media/3eec70a314a0cf3b.mp4",
     "audio": ""
    },
    {
@@ -468,7 +468,7 @@
     "warning": false,
     "text": "16. ازاي تقفل مظبوط ومتغطيش علي اللمبة",
     "image": "",
-    "video": "media/c4d363913f3c364d.mp4",
+    "video": "media/f2d98b3dc9e5bab5.mp4",
     "audio": ""
    },
    {
@@ -477,7 +477,7 @@
     "warning": false,
     "text": "17. بعد ما تقفل اتأكد من اللمبة باينة اسأل البمشهندس الجهاز تمام ولا لأ",
     "image": "",
-    "video": "media/bfff83e770798c72.mp4",
+    "video": "media/92511022dd524eee.mp4",
     "audio": ""
    },
    {
@@ -486,7 +486,7 @@
     "warning": true,
     "text": "18. قفل ورجع كل حاجة واسأل البمشهندس الجهاز تمام ولا لأ",
     "image": "",
-    "video": "media/07c8cb489dffd2c8.mp4",
+    "video": "media/5d71785b70520a11.mp4",
     "audio": ""
    }
   ]

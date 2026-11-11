@@ -1,0 +1,945 @@
+{
+ "about": "Videos replaced by smaller copies (tools/shrink_videos.py). For each one: where it is used, and where the ORIGINAL is kept: in the editor's Drive folder (driveId) and in git (git show <oldCommit>:media/<old> > original.mp4). The editor applies old -> new to its Sheet.",
+ "videos": [
+  {
+   "old": "d9d253923e45ca81.mp4",
+   "new": "c45ce68c554e9318.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 7481923,
+   "newBytes": 1873610,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 1,
+     "stepId": "s-61b0b5d0",
+     "models": [],
+     "text": "1. افصل الكهربا عن الجهاز"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1Lh04Hu5MF8UoLsYSO18qeuSYhXCSdtm1"
+  },
+  {
+   "old": "8100ea873974f8ea.mp4",
+   "new": "c9dd8bb5d9ebfe95.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 6958563,
+   "newBytes": 1937777,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 2,
+     "stepId": "s-cbf05d39",
+     "models": [],
+     "text": "2. شيل الجهاز من الحيطة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1LLXZkQvHL4zJRzPQR-T6-MhvaTFHHQIW"
+  },
+  {
+   "old": "380176edfc2894cd.mp4",
+   "new": "2b981b515a8f9122.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 17453548,
+   "newBytes": 7083550,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.7 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 3,
+     "stepId": "s-4da951e5",
+     "models": [],
+     "text": "3. شيل الغطا بتاع الجهاز وامسك الجهاز من تحت عشان الأنتينا متفصلش وفك الغطا براح"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1vYZJBbBlWfTetC663GWg_krp3_2r7dE4"
+  },
+  {
+   "old": "1a64fb3be78de9ce.mp4",
+   "new": "d68dd0672c430cd4.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 20214110,
+   "newBytes": 6311858,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.1 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 5,
+     "stepId": "s-dfb583e7",
+     "models": [],
+     "text": "5. شيل سلك الباور بعد ما صورت"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "15AdFcTT8FINU4tbpmxkWPsF7B_gM1BJB"
+  },
+  {
+   "old": "43c59114fae6ca85.mp4",
+   "new": "3edee99efc557651.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 16336152,
+   "newBytes": 4379948,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 6,
+     "stepId": "s-3064fac4",
+     "models": [],
+     "text": "6. شوف توصيلة البطارية"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1a96ZUG2fAVTHBjQS7MPFbQTJu3e4q6j_"
+  },
+  {
+   "old": "17eda00847120ee3.mp4",
+   "new": "2e64bdca563be1a7.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 22335848,
+   "newBytes": 5298463,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 7,
+     "stepId": "s-06f1075c",
+     "models": [],
+     "text": "7. وصل البطارية بالأدابتور وتتأكد مفيش سلك نحاس طالع لبرة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1i1DpTRhxrXbM6wUh3vEk5xBfPbgEaQN9"
+  },
+  {
+   "old": "f7c2b2168d279a92.mp4",
+   "new": "18d850e83791a829.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 16141643,
+   "newBytes": 4892573,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 8,
+     "stepId": "s-10ae2042",
+     "models": [],
+     "text": "8. وصل الكهربا تاني عشان تتأكد من النور الأزرق بتاع البطارية"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1j4VTACojT-najd11fpx6BVikNlDG4cHP"
+  },
+  {
+   "old": "3ffb0842dea32417.mp4",
+   "new": "de2d4d857984b395.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 16341595,
+   "newBytes": 8479674,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 9,
+     "stepId": "s-d3996289",
+     "models": [],
+     "text": "9. افصل الباور ودخل سلك البطارية بنفس الترتيب اللي كان موجود"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "13W94uSLQOg99lCSDvKqV9NltNSfxW8Iu"
+  },
+  {
+   "old": "4356eaab4c955afd.mp4",
+   "new": "6b8600968e796280.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 22505149,
+   "newBytes": 5461342,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 10,
+     "stepId": "s-1f852eff",
+     "models": [],
+     "text": "10. دخل سلك البطارية واتأكد مفيش نحاس لبرة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1N00PueTAKrB_Kr9KHuA01mE98uxGIjK2"
+  },
+  {
+   "old": "a12f6808c0eca3ff.mp4",
+   "new": "b3dcbf900ad82b98.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 10411282,
+   "newBytes": 2208882,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.7 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 11,
+     "stepId": "s-b5694622",
+     "models": [],
+     "text": "11. اتأكد الجهاز شغال بعد ما دخلت البطارية"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1lfC9TBo0ldK9Yh3hFgNs84VwdXxT__80"
+  },
+  {
+   "old": "7eb76beb38eb20ef.mp4",
+   "new": "fdf1d8befef74979.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 20808660,
+   "newBytes": 13874047,
+   "oldFormat": "h264 854x480 1.5 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 12,
+     "stepId": "s-4f164416",
+     "models": [],
+     "text": "12. افصل البطارية ورجع الأنتينا مكانها"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1bqsuMbz5YozTzzTNlR-oO8yEIEp7LfNC"
+  },
+  {
+   "old": "727f385812153776.mp4",
+   "new": "954225448b1f9bc3.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 14857746,
+   "newBytes": 7572939,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 13,
+     "stepId": "s-8ae5a64e",
+     "models": [],
+     "text": "13. حط البطارية تاني وهتلاقي الجهاز اشتغل"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1Ia4gjnBufVc2lqHHiNiZA-jemEg65X43"
+  },
+  {
+   "old": "c58f77d0b73d8047.mp4",
+   "new": "30188c8820a706ea.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 21730491,
+   "newBytes": 6145498,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 14,
+     "stepId": "s-94c97747",
+     "models": [],
+     "text": "14. اتأكد من اللمبة مبقتش بتقفل وتطفي بسرعة وثبتت مكانها قبل ما تقفل العلبة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1XAivPzQ7mFJ61JcOyeTl-kbVjMk0RWj_"
+  },
+  {
+   "old": "55a2378c92bce05c.mp4",
+   "new": "3eec70a314a0cf3b.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 20336760,
+   "newBytes": 15825292,
+   "oldFormat": "av1 854x480 1.1 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 15,
+     "stepId": "s-cd69bd90",
+     "models": [],
+     "text": "15. رجع الغطا واتأكد انك قفلت الجهاز مظبوط من جوة وحاطط غطا العلبة في الاتجاه ال"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1BewvrOtaDJpzACa2zvHzZUNOiN5JC4D1"
+  },
+  {
+   "old": "c4d363913f3c364d.mp4",
+   "new": "f2d98b3dc9e5bab5.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 19709468,
+   "newBytes": 13196855,
+   "oldFormat": "h264 854x480 1.5 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 16,
+     "stepId": "s-919f3202",
+     "models": [],
+     "text": "16. ازاي تقفل مظبوط ومتغطيش علي اللمبة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1OGLbRlmv1viHjemY0OlXndGzA0O7j-ne"
+  },
+  {
+   "old": "bfff83e770798c72.mp4",
+   "new": "92511022dd524eee.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 15216968,
+   "newBytes": 3916626,
+   "oldFormat": "h264 854x480 3.5 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 17,
+     "stepId": "s-53a38377",
+     "models": [],
+     "text": "17. بعد ما تقفل اتأكد من اللمبة باينة اسأل البمشهندس الجهاز تمام ولا لأ"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1rRlTNyApzQ-IONb-pzilRxHBD99Hly_e"
+  },
+  {
+   "old": "07c8cb489dffd2c8.mp4",
+   "new": "5d71785b70520a11.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 12249466,
+   "newBytes": 3767212,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.1 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 18,
+     "stepId": "s-cbbb1195",
+     "models": [],
+     "text": "18. قفل ورجع كل حاجة واسأل البمشهندس الجهاز تمام ولا لأ"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1w_VicvfVz_PtVO2V4dXN211eG5AJGgOx"
+  },
+  {
+   "old": "5d7876869d5a489b.mp4",
+   "new": "653ba8da90963e73.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 12490044,
+   "newBytes": 3501852,
+   "oldFormat": "h264 480x854 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 1,
+     "stepId": "s-0e888695",
+     "models": [],
+     "text": "1.افصل الكهربا عن الجهاز الأول وشيل الجهاز من الحيطة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1zCuvRfUroW5DpUZKG9fpupDoQPsiJkme"
+  },
+  {
+   "old": "d3af5e515bcfa4cb.mp4",
+   "new": "980ecb55287ffce5.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 11597810,
+   "newBytes": 3303595,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 2,
+     "stepId": "s-273ccdd5",
+     "models": [],
+     "text": "2. فك الغطا بتاع العلبة وامسك العلبة من تحت عشان الغطا ميتفكش مع الأنتينا وصور ا"
+    },
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 2,
+     "stepId": "s-75a56c57",
+     "models": [],
+     "text": "2. شيل الجهاز من الحيطة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "17oY4fH_vWPUDN0DSExELpxNIYL0oS_Js"
+  },
+  {
+   "old": "6c42a12ceb6d5eae.mp4",
+   "new": "378b51d1064e19b1.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 21271555,
+   "newBytes": 5625494,
+   "oldFormat": "h264 480x854 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 3,
+     "stepId": "s-36c0522f",
+     "models": [],
+     "text": "3. لو الأنتينا فصلت معاك"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1kaQFKyTklM7LIUJYhPibvJMwW6RVld2l"
+  },
+  {
+   "old": "5e836e08186b942d.mp4",
+   "new": "5cfd725bde7b5c4c.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 24209973,
+   "newBytes": 7139024,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 4,
+     "stepId": "s-53d4c96e",
+     "models": [],
+     "text": "4. شيل الأسلاك بعد ما صورت عشان تعرف ترجعها"
+    },
+    {
+     "job": "mount-battery",
+     "jobTitle": "تركيب البطارية",
+     "step": 4,
+     "stepId": "s-49cc395a",
+     "models": [],
+     "text": "4. لو الأنتينا فصلت منك بالغلط"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "17YJTsTy3LsEMmwx1pzi8BZu4GLcrm_vH"
+  },
+  {
+   "old": "eb99df4581777399.mp4",
+   "new": "9c9171166a380c41.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 21648020,
+   "newBytes": 5297702,
+   "oldFormat": "h264 480x854 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 5,
+     "stepId": "s-782ed75c",
+     "models": [],
+     "text": "5. شيل الجهاز القديم وسيب الغطا بتاعها عشان هناخد منها الخط بتاع العميل"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1ADyDJQ3-8Tbz0oH4LGWuPNll-RflXZ5N"
+  },
+  {
+   "old": "bbd8d71dd8689ee8.mp4",
+   "new": "bd310ee1f1c2a8e9.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 23406521,
+   "newBytes": 14986383,
+   "oldFormat": "h264 480x854 1.5 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 6,
+     "stepId": "s-a44aa789",
+     "models": [],
+     "text": "6. حط الخط بتاع العميل من الجهاز القديم للجهاز الجديد (لو الجهاز الجديد مفهيوش ا"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1FqygBKRIF0JlV5M69b0iu5-yHvu1eC3N"
+  },
+  {
+   "old": "38646d0783fb3255.mp4",
+   "new": "52f7b55157ac308c.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 20772101,
+   "newBytes": 9134812,
+   "oldFormat": "h264 480x854 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 7,
+     "stepId": "s-852dbe8c",
+     "models": [],
+     "text": "7. حط الأسلاك الجهاز الجديد بنفس الترتيب والألوان واتأكد مفيش نحاس لبرة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1nGHGXCS8DxsNIVwNWjpCHiBagZQ7thUu"
+  },
+  {
+   "old": "c8e86c14adaf2906.mp4",
+   "new": "a20d3fccd5566dc9.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 19996063,
+   "newBytes": 9593516,
+   "oldFormat": "h264 480x854 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 8,
+     "stepId": "s-5cbe765b",
+     "models": [],
+     "text": "8.  افصل الكهربا ودخل الأنتينا والغطا اتأكد من اللمبة ثبتت ومش بتقفل وتطفي واسأل"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1CJfgCj_xcg1HRGFGAgwM4AYaNMHroyZK"
+  },
+  {
+   "old": "6c6373b74d0d35b7.mp4",
+   "new": "2aa576c6ad9b3988.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 17659001,
+   "newBytes": 9446177,
+   "oldFormat": "h264 480x854 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 9,
+     "stepId": "s-2b6c99cb",
+     "models": [],
+     "text": "9. قفل الجهاز مظبوط من جوة ومتطلعش اي سلك لبرة واقفل الغطا في الاتجاه الصحيح (ال"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1J6N8Wr40d_OJTeyW8sQEk0Zv8airs2Y7"
+  },
+  {
+   "old": "9324e6d1b7e6095d.mp4",
+   "new": "b856b6ae7bca4077.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 19984302,
+   "newBytes": 6961981,
+   "oldFormat": "h264 480x854 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 0.6 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 10,
+     "stepId": "s-0877d5cd",
+     "models": [],
+     "text": "10. اقفل العلبة وامسك في الغطا وحط ال 4 مسامير"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1zV9trG6f108zKUGF9f4Za8aqzkKZ8VGq"
+  },
+  {
+   "old": "1d3d7effd54e1239.mp4",
+   "new": "c782fe2dbd210d6e.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 14115771,
+   "newBytes": 4029611,
+   "oldFormat": "h264 480x854 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 480x854 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-device",
+     "jobTitle": "تغيير الجهاز",
+     "step": 11,
+     "stepId": "s-551991f7",
+     "models": [],
+     "text": "11. بص علي اللمبة اتأكد انها ثبتت ومش بتنور وتطفي كل شوية وبعدها اسأل البشمهندس "
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1ZPW0VT_Bk8SQDHqI1XmkNLDb3kvUQ5Fr"
+  },
+  {
+   "old": "99eadcea2ca60123.mp4",
+   "new": "590c09ef4f485ae4.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 8517597,
+   "newBytes": 2422115,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 1,
+     "stepId": "s-11647829",
+     "models": [],
+     "text": "1.افصل الكهربا عن الجهاز ولو لقيت الجهاز لسه شغال يبقي جواه بطارية"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1dDvYND3S5iFptp89Lp5Tw79DjNZkiIjM"
+  },
+  {
+   "old": "45ad91827012101f.mp4",
+   "new": "3af2487f73274855.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 19205308,
+   "newBytes": 9689930,
+   "oldFormat": "h264 854x480 1.5 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 3,
+     "stepId": "s-ab4074da",
+     "models": [],
+     "text": "3. شيل غطا العلبة وخليك ماسك العلبة من تحت وانت بتفك عشان الغطا ميقعش منك وبعدها"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1mt_9YQJlfJnfUBQOXp53zaBzafC0Mh6a"
+  },
+  {
+   "old": "f58a7e1c058a2c4a.mp4",
+   "new": "0422023c044039cd.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 9053003,
+   "newBytes": 2883353,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.1 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 4,
+     "stepId": "s-021d0c17",
+     "models": [],
+     "text": "4. صور الجهاز عشان متنساش اماكن الأسلاك"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1ALvWKZfMlRRWJwdqt1ElOOryjBlWY7sr"
+  },
+  {
+   "old": "edd9cb0838685ed7.mp4",
+   "new": "f68518e70944fa8f.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 23141800,
+   "newBytes": 6746497,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 5,
+     "stepId": "s-13ef64d0",
+     "models": [],
+     "text": "5. لو الأنتينا فكت منك ترجعها ازاي"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "14LA6JQpHwPL2UhNhLTZRpGakM39hsCAA"
+  },
+  {
+   "old": "d2690a70b1ed5e03.mp4",
+   "new": "6d6c1c8494a51f87.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 18510693,
+   "newBytes": 9680654,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 6,
+     "stepId": "s-76e97f98",
+     "models": [],
+     "text": "6.شيل السنسور البايظ وشوف أسلاكه بعد ما صورته"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1x2SGT1CgtCx0qPqbkojdoGc5nJoqZSU5"
+  },
+  {
+   "old": "677af0c5d16e6274.mp4",
+   "new": "06d1b434a2edbfed.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 16268783,
+   "newBytes": 4396622,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 7,
+     "stepId": "s-2d07cc43",
+     "models": [],
+     "text": "7. جيب السنسور الجديد ولو طلع فيه خمس اسلاك الحم السلكين الأسود مع بعض"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1bgaWKE3PAkFgvHfmzhp9RxAoiyrO5wrB"
+  },
+  {
+   "old": "e754a7709099c2e8.mp4",
+   "new": "c69ecfe57c01e1b7.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 18757219,
+   "newBytes": 9055547,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 8,
+     "stepId": "s-61692b06",
+     "models": [],
+     "text": "8. حط القلاووظ بتاع السنسور قبل ما تدخله جوة العلبة مع البلاستيكة بتاعتها"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1shpIG4FJ8huj1COT9vy7W9IJaaR2g5bV"
+  },
+  {
+   "old": "62491ebe60259f84.mp4",
+   "new": "19d0d7213be7725e.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 20626432,
+   "newBytes": 4830456,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 9,
+     "stepId": "s-aee5c92e",
+     "models": [],
+     "text": "9. دخل أسلاك السنسور بنفس الترتيب والألوان"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "14J-8zElPKOcbiBHqvWkCWPJvKnl0J5OR"
+  },
+  {
+   "old": "c0168f627b883be8.mp4",
+   "new": "06b6b8b45ab8708b.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 14071107,
+   "newBytes": 6308905,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 10,
+     "stepId": "s-f6a12913",
+     "models": [],
+     "text": "10. اتأكد ان مفيش نحاس لبرة"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1NsiaRKh8AX-kMPmRiyTa3IN91C7QXTaF"
+  },
+  {
+   "old": "bb06bc20a95812f6.mp4",
+   "new": "aee2f51e5407ab24.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 14033342,
+   "newBytes": 6014832,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.8 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 11,
+     "stepId": "s-9534264f",
+     "models": [],
+     "text": "11. قفل القلاووظ بتاع السنسور عشان تثبته"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1CMRDQSfcXe3m_gL9CYqITz5R7vLrrAbC"
+  },
+  {
+   "old": "8846add6a16b4b99.mp4",
+   "new": "8b7d31536db1f5bf.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 18079886,
+   "newBytes": 5988262,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.1 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 12,
+     "stepId": "s-9e778fce",
+     "models": [],
+     "text": "12. رجع الأنتينا مكانها"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1E6l512nYabn4z78ZeqgO-JlM3xcMw0ZD"
+  },
+  {
+   "old": "7aa7ebae3bbdf91d.mp4",
+   "new": "8220ebc7c76a5875.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 9031743,
+   "newBytes": 2397025,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 13,
+     "stepId": "s-710f8596",
+     "models": [],
+     "text": "13. متقفلش الجهاز غير لما تتأكد من ان اللمبة ثبتت مكانها ومش بتنور وتطفي كل شوية"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1eLarCJvk2jR1kOpWA9byBDE0x_WHGaOS"
+  },
+  {
+   "old": "c6377f78f81e768c.mp4",
+   "new": "6b4b2e69ee745de9.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 18265077,
+   "newBytes": 5193610,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 14,
+     "stepId": "s-3830ec2b",
+     "models": [],
+     "text": "14. رجع غطا العلبة بالاتجاه الصحيح (المستطيل عند المستطيل وفتحة اللمبة عند مكان "
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1jAd2Y6SMMzjCvOxmUbOWHJjIod4YqaVh"
+  },
+  {
+   "old": "77fd3156fc98c76f.mp4",
+   "new": "b8ddcc66e6f120b7.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 10990183,
+   "newBytes": 3226092,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 1.0 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 15,
+     "stepId": "s-06091454",
+     "models": [],
+     "text": "15. اتأكد من اللمبة بعد ما قفلت الغطا واسأل البشمهندس الجهاز تمام ولا لأ؟"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1j6UVgDIc1cyzzGVW4xhp5BceD7j4EqxN"
+  },
+  {
+   "old": "762e0ac05aff2f68.mp4",
+   "new": "60b717bbe2c34272.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 14468432,
+   "newBytes": 5242319,
+   "oldFormat": "h264 854x480 1.8 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.7 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 16,
+     "stepId": "s-eaa0bc61",
+     "models": [],
+     "text": "16. امسك غطا الجهاز من تحت واقفل العلبة بال 4 مسامير"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "1gRSxwSJkhaRP0fg4VYOI92SnYyKeSN1G"
+  },
+  {
+   "old": "8c44d0afbd1f0bad.mp4",
+   "new": "8709692c77e28a87.mp4",
+   "date": "2026-11-11",
+   "oldBytes": 12332593,
+   "newBytes": 3156034,
+   "oldFormat": "h264 854x480 3.4 Mb/s, aac stereo",
+   "newFormat": "h264 854x480 0.9 Mb/s, aac mono",
+   "usedIn": [
+    {
+     "job": "replace-sensor",
+     "jobTitle": "تغيير الحساس",
+     "step": 17,
+     "stepId": "s-9f4d4bf6",
+     "models": [],
+     "text": "17. رجع الجهاز مكانه واسأل البشمهندس الجهاز تمام ولا لأ؟"
+    }
+   ],
+   "oldCommit": "8a438e9e5567f8a208b04aceed07de93f3478519",
+   "driveId": "13I4YwB1nT2Udo1-bliR_oiukRo9Ty_Wo"
+  }
+ ]
+}
