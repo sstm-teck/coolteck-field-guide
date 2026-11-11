@@ -27,6 +27,7 @@ import os
 import shutil
 import subprocess
 import sys
+from zoneinfo import ZoneInfo
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONTENT = os.path.join(ROOT, 'content', 'content.json')
@@ -197,6 +198,9 @@ def main():
         for s in steps:
             if s.get('video') in rename:
                 s['video'] = rename[s['video']]
+    # Open phones switch to new content only when its version changes (same format as the editor).
+    now = datetime.datetime.now(ZoneInfo('Africa/Cairo'))
+    content['version'] = now.strftime('%Y-%m-%d.%H%M%S.') + '%03d' % (now.microsecond // 1000)
     # The old files are removed from the site only when nothing else (a picture, a sound) still uses them.
     still = json.dumps(content)
     for item in plan:
