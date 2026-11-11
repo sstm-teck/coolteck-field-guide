@@ -112,16 +112,17 @@ function publish_() {
     cache.put('publishing', currentUser_() || 'Someone', 7 * 60);
   });
   try {
-    const snap = withLock_(() => ({ content: buildContent_(), rows: readTable_('Media') }));
-    const content = snap.content, mediaRows = snap.rows;
-    const used = usedMedia_(content);
-
     const head = gh_('get', '/git/ref/heads/' + BRANCH).object.sha;
     const baseTree = gh_('get', '/git/commits/' + head).tree.sha;
     const tree = gh_('get', '/git/trees/' + baseTree + '?recursive=1');
     if (tree.truncated) throw new Error('The repository is too big to read in one go.');
     const inRepo = {}, filled = {};   // filled = has content; an empty file in the repo is sent again
     tree.tree.forEach(t => { if (t.type === 'blob') { inRepo[t.path] = t.sha; if (t.size > 0) filled[t.path] = true; } });
+    applyVideoBackupBlob_(inRepo[VIDEO_BACKUP_PATH]);   // smaller videos made on a PC: before the sheets are read
+
+    const snap = withLock_(() => ({ content: buildContent_(), rows: readTable_('Media') }));
+    const content = snap.content, mediaRows = snap.rows;
+    const used = usedMedia_(content);
 
     const entries = [], added = [], missing = [], waiting = [];
     let sent = 0;
@@ -186,5 +187,64 @@ function publish_() {
     };
   } finally {
     cache.remove('publishing');
+  }
+}
+
+// ---------- smaller videos ----------
+// tools/shrink_videos.py (run on a PC) replaces big videos in the repo with smaller copies under new
+// names and lists each change in tools/video-backup.json. The editor switches those names in its
+// sheets, so its next Publish keeps the small files. Each change is applied once; a cell is changed
+// only while it still holds the old name. The original stays in Drive (its Media row is kept).
+
+const VIDEO_BACKUP_PATH = 'tools/video-backup.json';
+
+function applyVideoBackup_(list) {
+  const props = PropertiesService.getScriptProperties();
+  const seen = props.getProperties();
+  const todo = (list || []).filter(e => e && /^[0-9a-f]{16}\.mp4$/.test(e.new) && e.old && !seen['VB:' + e.old]);
+  if (!todo.length) return 0;
+  return withLock_(() => {
+    const map = {};
+    todo.forEach(e => { map[e.old] = e.new; });
+    const steps = readTable_('Steps');
+    let cells = 0;
+    steps.forEach(s => { if (map[s.Video]) { s.Video = map[s.Video]; cells++; } });
+    if (cells) writeTable_('Steps', steps);
+    const media = readTable_('Media');
+    todo.forEach(e => {
+      if (media.some(r => r.Name === e.new)) return;
+      media.push({ Name: e.new, Type: 'video', Bytes: e.newBytes || '', 'Drive ID': '', Published: 'Yes', 'Uploaded by': 'shrink_videos.py', Time: new Date() });
+    });
+    writeTable_('Media', media);
+    const marks = {};
+    todo.forEach(e => { marks['VB:' + e.old] = e.new; });
+    props.setProperties(marks);
+    log_('Smaller videos', todo.length + ' video(s)', cells + ' step(s) now use the smaller copies; originals stay in Drive (see ' + VIDEO_BACKUP_PATH + ')');
+    return cells;
+  });
+}
+
+/** Reads the backup list at a blob SHA (from a tree) unless that version was applied already. */
+function applyVideoBackupBlob_(sha) {
+  const props = PropertiesService.getScriptProperties();
+  if (!sha || props.getProperty('VB_SHA') === sha) return;
+  const blob = gh_('get', '/git/blobs/' + sha);
+  const text = Utilities.newBlob(Utilities.base64Decode(String(blob.content).replace(/\s/g, ''))).getDataAsString('UTF-8');
+  applyVideoBackup_(JSON.parse(text).videos);
+  props.setProperty('VB_SHA', sha);
+}
+
+/** On page load, at most every 10 minutes; never stops the page from loading. */
+function checkVideoBackup_() {
+  if (!token_()) return;
+  const cache = CacheService.getScriptCache();
+  if (cache.get('vb-checked')) return;
+  try {
+    const dir = gh_('get', '/contents/tools?ref=' + BRANCH);
+    const f = (Array.isArray(dir) ? dir : []).find(t => t.path === VIDEO_BACKUP_PATH);
+    if (f) applyVideoBackupBlob_(f.sha);
+    cache.put('vb-checked', '1', 600);
+  } catch (e) {
+    console.warn('Video backup check failed: ' + e);
   }
 }

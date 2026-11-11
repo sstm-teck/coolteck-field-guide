@@ -55,6 +55,7 @@ function payload_() {
 function apiLoad() {
   requireStaff_();
   seedFromSite_();
+  checkVideoBackup_();
   return payload_();
 }
 
