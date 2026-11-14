@@ -1,5 +1,5 @@
 {
- "version": "2026-11-11.220429.555",
+ "version": "2026-11-14.035135.136",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -33,7 +33,7 @@
   {
    "id": "replace-sensor",
    "title": "تغيير الحساس",
-   "image": "media/op-replace-sensor.svg",
+   "image": "media/595750dde4489fd0.webp",
    "audio": "",
    "models": [
     "wrover"
