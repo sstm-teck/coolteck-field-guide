@@ -1,5 +1,5 @@
 {
- "version": "2026-11-14.035135.136",
+ "version": "2026-11-14.035457.154",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -36,7 +36,9 @@
    "image": "media/595750dde4489fd0.webp",
    "audio": "",
    "models": [
-    "wrover"
+    "wrover",
+    "xiao-c3",
+    "xiao-s3-plus"
    ]
   },
   {
