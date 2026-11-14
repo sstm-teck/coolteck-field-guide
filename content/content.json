@@ -1,5 +1,5 @@
 {
- "version": "2026-11-14.035457.154",
+ "version": "2026-11-14.035540.830",
  "app": {
   "title": "دليل الفني",
   "subtitle": "كول تك",
@@ -47,7 +47,9 @@
    "image": "media/op-mount-battery.svg",
    "audio": "",
    "models": [
-    "wrover"
+    "wrover",
+    "xiao-c3",
+    "xiao-s3-plus"
    ]
   }
  ],
